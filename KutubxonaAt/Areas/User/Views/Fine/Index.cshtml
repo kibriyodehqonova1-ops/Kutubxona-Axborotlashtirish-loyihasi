@@ -1,0 +1,104 @@
+﻿@model IEnumerable<KutubxonaAt.Models.Jarima>
+@{
+    ViewData["Title"] = "Mening jarimalarim";
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+<!-- Page Banner -->
+<section class="page-banner services-banner">
+    <div class="container">
+        <div class="banner-header">
+            <h2>Mening jarimalarim</h2>
+            <span class="underline center"></span>
+            <p class="lead">Sizga hisoblangan jarimalar ro‘yxati</p>
+        </div>
+        <div class="breadcrumb">
+            <ul>
+                <li><a asp-area="User" asp-controller="Home" asp-action="Index">Bosh sahifa</a></li>
+                <li>Jarimalar</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<div id="content" class="site-content">
+    <div id="primary" class="content-area">
+        <main id="main" class="site-main">
+            <div class="main-news-list">
+                <div class="container">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Jarimalar</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Kitob nomi</th>
+                                            <th>Jarima turi</th>
+                                            <th>Sabab</th>
+                                            <th>Miqdor</th>
+                                            <th>Berilgan sana</th>
+                                            <th>Holat</th>
+                                            <th>To‘langan sana</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var fine in Model)
+                                        {
+                                            <tr>
+                                                <td>@fine.Beruv?.KitobNusxa?.Kitob?.Nomi</td>
+                                                <td>
+                                                    @if (fine.JarimaTuri == "Kechiktirilgan")
+                                                    {
+                                                        <span class="label label-warning">Kechiktirilgan</span>
+                                                    }
+                                                    else if (fine.JarimaTuri == "Shikastlangan")
+                                                    {
+                                                        <span class="label label-danger">Shikastlangan</span>
+                                                    }
+                                                    else if (fine.JarimaTuri == "Yo'qolgan")
+                                                    {
+                                                        <span class="label label-default">Yo'qolgan</span>
+                                                    }
+                                                </td>
+                                                <td>@fine.Sabab</td>
+                                                <td>@fine.Miqdor.ToString("N0") so‘m</td>
+                                                <td>@fine.BerilganSana.ToString("dd.MM.yyyy")</td>
+                                                <td>
+                                                    @if (fine.Holati == "Kutilmoqda")
+                                                    {
+                                                        <span class="label label-danger">Kutilmoqda</span>
+                                                    }
+                                                    else if (fine.Holati == "To'langan")
+                                                    {
+                                                        <span class="label label-success">To‘langan</span>
+                                                    }
+                                                    else if (fine.Holati == "Bekor qilingan")
+                                                    {
+                                                        <span class="label label-default">Bekor qilingan</span>
+                                                    }
+                                                </td>
+                                                <td>@(fine.TolanganSana?.ToString("dd.MM.yyyy") ?? "-")</td>
+                                            </tr>
+                                        }
+                                        @if (!Model.Any())
+                                        {
+                                            <tr>
+                                                <td colspan="7" class="text-center text-muted">
+                                                    <i class="fa fa-money fa-2x"></i><br />
+                                                    Jarimalaringiz mavjud emas.
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>

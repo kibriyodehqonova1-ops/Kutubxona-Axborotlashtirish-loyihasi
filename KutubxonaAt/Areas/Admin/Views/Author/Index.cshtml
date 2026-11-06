@@ -1,0 +1,58 @@
+﻿@model IEnumerable<KutubxonaAt.Models.Muallif>
+@{
+    ViewData["Title"] = "Mualliflar";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="content-wrapper">
+    <div class="page-header">
+        <h3 class="page-title">Mualliflar</h3>
+        <a asp-action="Create" class="btn btn-primary">+ Yangi muallif</a>
+    </div>
+
+    <div class="row">
+        <div class="col-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Ism</th>
+                                    <th>Familiya</th>
+                                    <th>Sharif</th>
+                                    <th>Taxallus</th>
+                                    <th>Tug'ilgan sana</th>
+                                    <th>Davlat</th>
+                                    <th>Amallar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@item.Ism</td>
+                                        <td>@item.Familiya</td>
+                                        <td>@item.Sharif</td>
+                                        <td>@item.Taxallus</td>
+                                        <td>@(item.TugilganSana?.ToString("dd.MM.yyyy") ?? "-")</td>
+                                        <td>@item.Davlat</td>
+                                        <td>
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Tahrirlash</a>
+                                            <form asp-action="Delete" method="post" style="display:inline;">
+                                                <input type="hidden" name="id" value="@item.Id" />
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Haqiqatan ham o‘chirmoqchimisiz?')">O‘chirish</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

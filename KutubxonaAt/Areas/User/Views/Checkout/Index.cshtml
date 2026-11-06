@@ -1,0 +1,126 @@
+@model IEnumerable<KutubxonaAt.Models.CartItem>
+@{
+    ViewData["Title"] = "Buyurtma rasmiylashtirish";
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+    decimal total = Model.Sum(c => c.Narxi);
+}
+
+<section class="page-banner services-banner">
+    <div class="container">
+        <div class="banner-header">
+            <h2>Buyurtma rasmiylashtirish</h2>
+            <span class="underline center"></span>
+            <p class="lead">To'lov va yetkazib berish ma'lumotlarini kiriting</p>
+        </div>
+        <div class="breadcrumb">
+            <ul>
+                <li><a asp-area="User" asp-controller="Home" asp-action="Index">Bosh sahifa</a></li>
+                <li><a asp-area="User" asp-controller="Cart" asp-action="Index">Savat</a></li>
+                <li>Buyurtma</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<div id="content" class="site-content">
+    <div id="primary" class="content-area">
+        <main id="main" class="site-main">
+            <div class="checkout-main">
+                <div class="container">
+                    @if (!Model.Any())
+                    {
+                        <div class="alert alert-warning text-center" style="margin-top:30px;">
+                            Savatingiz bo'sh. <a asp-area="User" asp-controller="Book" asp-action="Index">Kitoblarni ko'rish</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <form asp-area="User" asp-controller="Cart" asp-action="PlaceOrder" method="post">
+                            @Html.AntiForgeryToken()
+                            <div class="row" style="margin-top:30px;">
+                                <!-- Chap: manzil -->
+                                <div class="col-md-8">
+                                    <h2>Yetkazib berish manzili</h2>
+                                    <span class="underline left"></span>
+                                    <div class="form-group">
+                                        <label>Manzil</label>
+                                        <input type="text" name="manzil" class="form-control" placeholder="Shahar, ko'cha, uy raqami" required />
+                                    </div>
+
+                                    <h2 style="margin-top:20px;">To'lov usuli</h2>
+                                    <span class="underline left"></span>
+                                    <div class="form-group">
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="tolovUsuli" value="Naqd" checked /> Naqd pul (yetkazib berish vaqtida)
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="tolovUsuli" value="Click" /> Click
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="tolovUsuli" value="Payme" /> Payme
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="tolovUsuli" value="Plastik karta" /> Plastik karta
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Izoh (ixtiyoriy)</label>
+                                        <textarea name="izoh" class="form-control" rows="3" placeholder="Qo'shimcha ma'lumot..."></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- O'ng: buyurtma xulosasi -->
+                                <div class="col-md-4">
+                                    <h2>Buyurtma xulosasi</h2>
+                                    <span class="underline left"></span>
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Kitob</th>
+                                                <th>Narx</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <strong>@item.Nomi</strong><br />
+                                                        <small>@item.Mualliflar</small>
+                                                    </td>
+                                                    <td>@item.Narxi.ToString("N0") so'm</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                        <tfoot>
+                                            <tr class="success">
+                                                <td><strong>Jami:</strong></td>
+                                                <td><strong>@total.ToString("N0") so'm</strong></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+
+                                    <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">
+                                        <i class="fa fa-check"></i> Buyurtmani rasmiylashtirish
+                                    </button>
+                                    <a asp-area="User" asp-controller="Cart" asp-action="Index" class="btn btn-default btn-block" style="margin-top:5px;">
+                                        <i class="fa fa-arrow-left"></i> Savatga qaytish
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    }
+                </div>
+            </div>
+        </main>
+    </div>
+</div>

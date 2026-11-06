@@ -1,0 +1,385 @@
+@using System.Security.Claims
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Kutubxona AT</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet" />
+    <link href="~/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/style.css" rel="stylesheet" />
+    <link href="~/css/site-custom.css" rel="stylesheet" />
+</head>
+<body>
+
+@{
+    var ctrl     = ViewContext.RouteData.Values["controller"]?.ToString();
+    var act      = ViewContext.RouteData.Values["action"]?.ToString();
+    bool isAuth      = User.Identity?.IsAuthenticated ?? false;
+    bool isLibrarian = isAuth && User.IsInRole("Librarian");
+    bool isAdmin     = isAuth && User.IsInRole("Admin");
+    bool isStaff     = isLibrarian || isAdmin;
+
+    int cartCount = 0;
+    if (isAuth)
+    {
+        var cartJson = Context.Session.GetString("ShoppingCart");
+        if (!string.IsNullOrEmpty(cartJson))
+        {
+            try {
+                var cartItems = System.Text.Json.JsonSerializer.Deserialize<System.Collections.Generic.List<System.Text.Json.JsonElement>>(cartJson);
+                cartCount = cartItems?.Count ?? 0;
+            } catch { }
+        }
+    }
+}
+
+<!-- ═══ NAVBAR ═══════════════════════════════════════════ -->
+<header class="navbar-wrapper">
+    <div class="container">
+        <nav class="lib-navbar">
+
+            <!-- Logo -->
+            <a class="lib-navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                <i class="fa fa-book"></i> Kutubxona AT
+            </a>
+
+            <!-- Desktop menyusi -->
+            <ul class="lib-nav-links">
+                @if (isAuth)
+                {
+                    <li class="@(ctrl == "Home" && act == "Index" ? "active" : "")">
+                        <a asp-area="User" asp-controller="Home" asp-action="Index">
+                            <i class="fa fa-home"></i> Bosh sahifa
+                        </a>
+                    </li>
+                }
+                <li class="@(ctrl == "Book" ? "active" : "")">
+                    <a asp-area="User" asp-controller="Book" asp-action="Index">
+                        <i class="fa fa-search"></i> Katalog
+                    </a>
+                </li>
+
+                @if (isAuth)
+                {
+                    <li class="@(ctrl == "Loan" ? "active" : "")">
+                        <a asp-area="User" asp-controller="Loan" asp-action="Index">
+                            <i class="fa fa-book"></i> @(isStaff ? "Beruvlar" : "Kitoblarim")
+                        </a>
+                    </li>
+                    <li class="@(ctrl == "Reservation" ? "active" : "")">
+                        <a asp-area="User" asp-controller="Reservation" asp-action="Index">
+                            <i class="fa fa-calendar"></i> @(isStaff ? "Bronlar" : "Bronlarim")
+                        </a>
+                    </li>
+                    <li class="@(ctrl == "Fine" ? "active" : "")">
+                        <a asp-area="User" asp-controller="Fine" asp-action="Index">
+                            <i class="fa fa-exclamation-triangle"></i> Jarimalar
+                        </a>
+                    </li>
+
+                    @if (!isStaff)
+                    {
+                        <li class="lib-dropdown @(ctrl == "Abonement" || ctrl == "KutishRoyxati" || ctrl == "YetkazibBerish" || ctrl == "Purchase" ? "active" : "")">
+                            <a href="javascript:void(0)">
+                                <i class="fa fa-th-large"></i> Xizmatlar <i class="fa fa-caret-down"></i>
+                            </a>
+                            <ul class="lib-dropdown-menu">
+                                <li><a asp-area="User" asp-controller="Abonement" asp-action="Index"><i class="fa fa-star"></i> Abonement</a></li>
+                                <li><a asp-area="User" asp-controller="Purchase" asp-action="Index"><i class="fa fa-shopping-bag"></i> Xaridlarim</a></li>
+                                <li><a asp-area="User" asp-controller="Purchase" asp-action="DigitalLibrary"><i class="fa fa-folder-open"></i> Raqamli kutubxona</a></li>
+                                <li><a asp-area="User" asp-controller="KutishRoyxati" asp-action="Index"><i class="fa fa-clock-o"></i> Kutish ro'yxati</a></li>
+                                <li><a asp-area="User" asp-controller="YetkazibBerish" asp-action="Index"><i class="fa fa-truck"></i> Yetkazish</a></li>
+                            </ul>
+                        </li>
+                    }
+
+                    @if (isStaff)
+                    {
+                        <li>
+                            <a asp-area="Admin" asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-cog"></i> Admin panel
+                            </a>
+                        </li>
+                    }
+                }
+            </ul>
+
+            <!-- O'ng tomon: savat + profil + hamburger -->
+            <div class="lib-nav-right">
+                @if (isAuth)
+                {
+                    @if (!isStaff)
+                    {
+                        <a asp-area="User" asp-controller="Cart" asp-action="Index"
+                           class="lib-cart-btn" title="Savat">
+                            <i class="fa fa-shopping-cart"></i>
+                            @if (cartCount > 0)
+                            {
+                                <span class="lib-cart-badge">@cartCount</span>
+                            }
+                        </a>
+                    }
+                    <div class="lib-dropdown">
+                        <div class="lib-user-btn">
+                            <i class="fa fa-user-circle"></i>
+                            <span class="hidden-xs">@(User.Identity?.Name?.Split('@')[0] ?? "Profil")</span>
+                            <i class="fa fa-caret-down"></i>
+                        </div>
+                        <ul class="lib-dropdown-menu" style="right:0; left:auto; min-width:180px;">
+                            <li><a asp-area="User" asp-controller="Profile" asp-action="Index"><i class="fa fa-user"></i> Profil</a></li>
+                            <li><a asp-area="User" asp-controller="Profile" asp-action="ChangePassword"><i class="fa fa-lock"></i> Parol o'zgartirish</a></li>
+                            <li style="border-top:1px solid #eee; margin-top:4px; padding-top:4px;">
+                                <form asp-area="" asp-controller="Home" asp-action="Index" method="post" style="margin:0;">
+                                    <button type="submit" style="width:100%;padding:8px 16px;text-align:left;background:none;border:none;cursor:pointer;font-size:13px;color:#c0392b;display:flex;align-items:center;gap:8px;">
+                                        <i class="fa fa-sign-out" style="width:18px;"></i> Chiqish
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                }
+                else
+                {
+                    <a asp-area="" asp-controller="Account" asp-action="Login" class="btn btn-primary btn-sm">
+                        <i class="fa fa-sign-in"></i> Kirish
+                    </a>
+                    <a asp-area="" asp-controller="Account" asp-action="Register" class="btn btn-default btn-sm hidden-xs">
+                        Ro'yxatdan o'tish
+                    </a>
+                }
+
+                <button class="lib-hamburger" id="hamburgerBtn" aria-label="Menyu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<!-- ═══ MOBIL MENYU ═══════════════════════════════════════ -->
+<div class="lib-mobile-menu" id="mobileMenu">
+    <div class="lib-mobile-menu-panel">
+        <ul>
+            @if (isAuth)
+            {
+                <li><div class="mobile-divider">ASOSIY</div></li>
+                <li><a asp-area="User" asp-controller="Home" asp-action="Index" class="@(ctrl=="Home"?"active-link":"")"><i class="fa fa-home"></i> Bosh sahifa</a></li>
+            }
+            <li><a asp-area="User" asp-controller="Book" asp-action="Index" class="@(ctrl=="Book"?"active-link":"")"><i class="fa fa-search"></i> Katalog</a></li>
+
+            @if (isAuth)
+            {
+                <li><a asp-area="User" asp-controller="Loan" asp-action="Index"><i class="fa fa-book"></i> @(isStaff ? "Beruvlar" : "Kitoblarim")</a></li>
+                <li><a asp-area="User" asp-controller="Reservation" asp-action="Index"><i class="fa fa-calendar"></i> @(isStaff ? "Bronlar" : "Bronlarim")</a></li>
+                <li><a asp-area="User" asp-controller="Fine" asp-action="Index"><i class="fa fa-exclamation-triangle"></i> Jarimalar</a></li>
+
+                @if (!isStaff)
+                {
+                    <li><div class="mobile-divider">XIZMATLAR</div></li>
+                    <li><a asp-area="User" asp-controller="Abonement" asp-action="Index"><i class="fa fa-star"></i> Abonement</a></li>
+                    <li><a asp-area="User" asp-controller="Cart" asp-action="Index"><i class="fa fa-shopping-cart"></i> Savat@(cartCount>0 ? $" ({cartCount})" : "")</a></li>
+                    <li><a asp-area="User" asp-controller="Purchase" asp-action="Index"><i class="fa fa-shopping-bag"></i> Xaridlarim</a></li>
+                    <li><a asp-area="User" asp-controller="KutishRoyxati" asp-action="Index"><i class="fa fa-clock-o"></i> Kutish ro'yxati</a></li>
+                    <li><a asp-area="User" asp-controller="YetkazibBerish" asp-action="Index"><i class="fa fa-truck"></i> Yetkazish</a></li>
+                }
+                @if (isStaff)
+                {
+                    <li><a asp-area="Admin" asp-controller="Home" asp-action="Index"><i class="fa fa-cog"></i> Admin panel</a></li>
+                }
+                <li><div class="mobile-divider">HISOB</div></li>
+                <li><a asp-area="User" asp-controller="Profile" asp-action="Index"><i class="fa fa-user"></i> Profil</a></li>
+                <li><a asp-area="User" asp-controller="Profile" asp-action="ChangePassword"><i class="fa fa-lock"></i> Parol o'zgartirish</a></li>
+                <li>
+                    <form asp-area="" asp-controller="Home" asp-action="Index" method="post" style="margin:0;">
+                        <button type="submit" style="width:100%;padding:12px 20px;text-align:left;background:none;border:none;border-bottom:1px solid #eee;cursor:pointer;font-size:14px;color:#c0392b;display:flex;align-items:center;gap:10px;">
+                            <i class="fa fa-sign-out" style="width:18px;"></i> Chiqish
+                        </button>
+                    </form>
+                </li>
+            }
+            else
+            {
+                <li><div class="mobile-divider">HISOB</div></li>
+                <li><a asp-area="" asp-controller="Account" asp-action="Login"><i class="fa fa-sign-in"></i> Kirish</a></li>
+                <li><a asp-area="" asp-controller="Account" asp-action="Register"><i class="fa fa-user-plus"></i> Ro'yxatdan o'tish</a></li>
+            }
+        </ul>
+    </div>
+</div>
+
+<!-- ═══ ASOSIY KONTENT ════════════════════════════════════ -->
+<div class="main-content">
+    @if (TempData["Success"] != null)
+    {
+        <div class="container" style="padding-top:12px; padding-bottom:0;">
+            <div class="alert alert-success">@TempData["Success"]</div>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="container" style="padding-top:12px; padding-bottom:0;">
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        </div>
+    }
+    @if (TempData["Warning"] != null)
+    {
+        <div class="container" style="padding-top:12px; padding-bottom:0;">
+            <div class="alert alert-warning">@TempData["Warning"]</div>
+        </div>
+    }
+    @if (TempData["Info"] != null)
+    {
+        <div class="container" style="padding-top:12px; padding-bottom:0;">
+            <div class="alert alert-info">@TempData["Info"]</div>
+        </div>
+    }
+
+    @RenderBody()
+</div>
+
+<!-- ═══ FOOTER ═══════════════════════════════════════════ -->
+<footer class="site-footer">
+    <div class="container">
+        <div style="padding:30px 0 10px;">
+            <div class="row">
+                <div class="col-md-4 col-sm-6" style="margin-bottom:20px;">
+                    <h3 class="footer-widget-title">Kutubxona haqida</h3>
+                    <span class="underline left"></span>
+                    <p style="color:#aaa;font-size:13px;line-height:1.7;">
+                        Kutubxonamiz kitobxonlarga keng qamrovli xizmatlar taqdim etadi. O'zbek va jahon adabiyotining eng sara namunalari.
+                    </p>
+                    <p style="color:#aaa;font-size:13px;margin:4px 0;"><i class="fa fa-map-marker" style="color:#e8a020;width:18px;"></i> Toshkent sh., Mustaqillik ko'chasi, 1-uy</p>
+                    <p style="color:#aaa;font-size:13px;margin:4px 0;"><i class="fa fa-phone" style="color:#e8a020;width:18px;"></i> <a href="tel:+998712000000" style="color:#aaa;">+99871 200-00-00</a></p>
+                    <p style="color:#aaa;font-size:13px;margin:4px 0;"><i class="fa fa-envelope" style="color:#e8a020;width:18px;"></i> <a href="mailto:info@kutubxona.uz" style="color:#aaa;">info@kutubxona.uz</a></p>
+                </div>
+                <div class="col-md-2 col-sm-6" style="margin-bottom:20px;">
+                    <h3 class="footer-widget-title">Tezkor havolalar</h3>
+                    <span class="underline left"></span>
+                    <ul style="list-style:none;padding:0;margin:0;">
+                        <li style="margin-bottom:5px;"><a asp-area="User" asp-controller="Book" asp-action="Index" style="color:#aaa;font-size:13px;"><i class="fa fa-angle-right" style="margin-right:5px;"></i>Katalog</a></li>
+                        @if (isAuth)
+                        {
+                            <li style="margin-bottom:5px;"><a asp-area="User" asp-controller="Profile" asp-action="Index" style="color:#aaa;font-size:13px;"><i class="fa fa-angle-right" style="margin-right:5px;"></i>Profil</a></li>
+                            <li style="margin-bottom:5px;"><a asp-area="User" asp-controller="Loan" asp-action="Index" style="color:#aaa;font-size:13px;"><i class="fa fa-angle-right" style="margin-right:5px;"></i>Kitoblarim</a></li>
+                            <li style="margin-bottom:5px;"><a asp-area="User" asp-controller="Fine" asp-action="Index" style="color:#aaa;font-size:13px;"><i class="fa fa-angle-right" style="margin-right:5px;"></i>Jarimalar</a></li>
+                        }
+                        else
+                        {
+                            <li style="margin-bottom:5px;"><a asp-area="" asp-controller="Account" asp-action="Login" style="color:#aaa;font-size:13px;"><i class="fa fa-angle-right" style="margin-right:5px;"></i>Kirish</a></li>
+                            <li style="margin-bottom:5px;"><a asp-area="" asp-controller="Account" asp-action="Register" style="color:#aaa;font-size:13px;"><i class="fa fa-angle-right" style="margin-right:5px;"></i>Ro'yxatdan o'tish</a></li>
+                        }
+                    </ul>
+                </div>
+                <div class="col-md-2 col-sm-6" style="margin-bottom:20px;">
+                    <h3 class="footer-widget-title">Ish vaqti</h3>
+                    <span class="underline left"></span>
+                    <ul style="list-style:none;padding:0;margin:0;font-size:13px;color:#aaa;">
+                        <li style="margin-bottom:4px;">Du–Pa: 9:00 – 21:00</li>
+                        <li style="margin-bottom:4px;">Juma: 9:00 – 18:00</li>
+                        <li style="margin-bottom:4px;">Shanba: 9:00 – 17:00</li>
+                        <li style="margin-bottom:4px;">Yakshanba: 13:00 – 18:00</li>
+                    </ul>
+                </div>
+                <div class="col-md-4 col-sm-6" style="margin-bottom:20px;">
+                    <h3 class="footer-widget-title">Tizim imkoniyatlari</h3>
+                    <span class="underline left"></span>
+                    <p style="color:#aaa;font-size:13px;line-height:1.7;">
+                        Kitob bron qilish, ijaraga olish, online uzaytirish, jarimalar nazorati, abonement tizimi va kitob sotib olish — barchasi bir platformada.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="background:#111;padding:12px 0;text-align:center;font-size:12px;color:#666;border-top:1px solid #222;">
+        © @DateTime.Now.Year Kutubxona AT. Barcha huquqlar himoyalangan.
+    </div>
+</footer>
+
+<script src="~/js/jquery-1.12.4.min.js"></script>
+<script src="~/js/bootstrap.min.js"></script>
+<script src="~/js/main.js"></script>
+<script>
+    // ── Hamburger menyu ────────────────────────────────────
+    (function () {
+        var hamburger = document.getElementById('hamburgerBtn');
+        var mobileMenu = document.getElementById('mobileMenu');
+        if (!hamburger || !mobileMenu) return;
+
+        hamburger.addEventListener('click', function () {
+            this.classList.toggle('open');
+            mobileMenu.classList.toggle('open');
+            document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+        });
+
+        mobileMenu.addEventListener('click', function (e) {
+            if (e.target === this) {
+                hamburger.classList.remove('open');
+                this.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+        });
+    })();
+
+    // ── Dropdown klaviatura yopish ─────────────────────────
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('.lib-dropdown')) {
+            document.querySelectorAll('.lib-dropdown.open').forEach(function (d) {
+                d.classList.remove('open');
+            });
+        }
+    });
+
+    document.querySelectorAll('.lib-dropdown > a, .lib-user-btn').forEach(function (el) {
+        el.addEventListener('click', function (e) {
+            var parent = this.closest('.lib-dropdown');
+            if (parent) {
+                e.stopPropagation();
+                parent.classList.toggle('open');
+            }
+        });
+    });
+
+    // ── Like tugmasi ───────────────────────────────────────
+    document.querySelectorAll('.like-btn').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            var isLoggedIn = @(isAuth ? "true" : "false");
+            if (!isLoggedIn) {
+                window.location.href = '/Account/Login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                return;
+            }
+            this.classList.toggle('liked');
+        });
+    });
+
+    // ── Global yordamchi funksiyalar ───────────────────────
+    function requireLogin(returnUrl) {
+        var isLoggedIn = @(isAuth ? "true" : "false");
+        if (!isLoggedIn) {
+            window.location.href = '/Account/Login?returnUrl=' + encodeURIComponent(returnUrl || window.location.pathname);
+            return false;
+        }
+        return true;
+    }
+
+    function libPrint() {
+        if (requireLogin()) window.print();
+    }
+
+    function libShare(title, url) {
+        if (!requireLogin()) return;
+        if (navigator.share) {
+            navigator.share({ title: title, url: url }).catch(console.error);
+        } else {
+            try {
+                navigator.clipboard.writeText(url).then(function() { alert('Havola nusxalandi!'); });
+            } catch(e) { alert('Havola: ' + url); }
+        }
+    }
+</script>
+@RenderSection("Scripts", required: false)
+</body>
+</html>

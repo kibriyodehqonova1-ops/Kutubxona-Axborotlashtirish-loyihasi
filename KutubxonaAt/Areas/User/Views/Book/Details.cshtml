@@ -1,0 +1,416 @@
+@using System.Security.Claims
+@model KutubxonaAt.Models.Kitob
+@{
+    ViewData["Title"] = Model.Nomi;
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+    var userId   = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    bool isAuth  = User.Identity?.IsAuthenticated ?? false;
+    bool isStaff = User.IsInRole("Admin") || User.IsInRole("Librarian");
+    int availableCopies  = ViewBag.AvailableCopies  ?? 0;
+    int forSaleCopies    = ViewBag.ForSaleCopies     ?? 0;
+    bool isDigital        = ViewBag.IsDigital         ?? false;
+    bool alreadyPurchased = ViewBag.AlreadyPurchased  ?? false;
+    DateTime? returnDate  = ViewBag.EarliestReturnDate;
+    string returnUrl     = $"/User/Book/Details/{Model.Id}";
+
+    // Tur bo'yicha bayroqlar
+    bool isEKitob  = Model.MediaTuri == KutubxonaAt.Models.Kitob.MediaType.ElektronKitob;
+    bool isAudio   = Model.MediaTuri == KutubxonaAt.Models.Kitob.MediaType.AudioKitob;
+    bool isVideo   = Model.MediaTuri == KutubxonaAt.Models.Kitob.MediaType.Video;
+    bool isJurnal  = Model.MediaTuri == KutubxonaAt.Models.Kitob.MediaType.Jurnal;
+    bool isKitob   = Model.MediaTuri == KutubxonaAt.Models.Kitob.MediaType.Kitob;
+    var mualliflar       = string.Join(", ", Model.KitobMualliflari.Select(km => km.Muallif.Familiya + " " + km.Muallif.Ism));
+}
+
+<!-- Page Banner -->
+<section class="page-banner services-banner">
+    <div class="container">
+        <div class="banner-header">
+            <h2>@Model.Nomi</h2>
+            <span class="underline center"></span>
+            <p class="lead">Kitob haqida batafsil ma'lumot</p>
+        </div>
+        <div class="breadcrumb">
+            <ul>
+                <li><a asp-area="User" asp-controller="Home" asp-action="Index">Bosh sahifa</a></li>
+                <li><a asp-area="User" asp-controller="Book" asp-action="Index">Katalog</a></li>
+                <li>@Model.Nomi</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<div id="content" class="site-content" style="padding: 30px 0;">
+    <div class="container">
+        <div class="row">
+
+            <!-- Rasm -->
+            <div class="col-md-3 col-sm-4" style="margin-bottom:20px;">
+                @if (!string.IsNullOrEmpty(Model.Rasm))
+                {
+                    <img src="@Model.Rasm" class="img-responsive"
+                         style="width:100%; max-height:340px; object-fit:cover; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,.15);" />
+                }
+                else
+                {
+                    <div style="width:100%; height:280px; background:#e9ecef; display:flex; align-items:center; justify-content:center; border-radius:8px;">
+                        <i class="fa fa-book fa-5x text-muted"></i>
+                    </div>
+                }
+
+                <!-- Reyting -->
+                @if (Model.BaholarSoni > 0)
+                {
+                    <div style="text-align:center; margin-top:12px;">
+                        @for (int s = 1; s <= 5; s++)
+                        {
+                            <i class="fa @(s <= Math.Round(Model.OrtachaBaho) ? "fa-star" : "fa-star-o")"
+                               style="color:#f39c12; font-size:16px;"></i>
+                        }
+                        <p style="font-size:12px; color:#888; margin-top:4px;">
+                            @Model.OrtachaBaho.ToString("0.0") / 5 (@Model.BaholarSoni ta baho)
+                        </p>
+                    </div>
+                }
+
+                <!-- Ko'rishlar soni -->
+                <p style="text-align:center; font-size:12px; color:#aaa; margin-top:6px;">
+                    <i class="fa fa-eye"></i> @Model.KorishlarSoni ta ko'rilgan
+                </p>
+            </div>
+
+            <!-- Ma'lumotlar -->
+            <div class="col-md-6 col-sm-8" style="margin-bottom:20px;">
+                <div class="panel panel-default" style="border-radius:8px;">
+                    <div class="panel-body">
+                        <h2 style="margin-top:0; color:#2c3e50;">@Model.Nomi</h2>
+
+                        @if (!string.IsNullOrWhiteSpace(mualliflar))
+                        {
+                            <p><i class="fa fa-user" style="color:#2c6fad; width:18px;"></i>
+                                <strong>Muallif:</strong> @mualliflar</p>
+                        }
+
+                        @{
+                            var kategoriyalar = string.Join(", ", Model.KitobKategoriyalari.Select(kk => kk.Kategoriya.Nomi));
+                        }
+                        @if (!string.IsNullOrWhiteSpace(kategoriyalar))
+                        {
+                            <p><i class="fa fa-tag" style="color:#2c6fad; width:18px;"></i>
+                                <strong>Kategoriya:</strong> @kategoriyalar</p>
+                        }
+
+                        <div class="row" style="margin:0;">
+                            <div class="col-sm-6" style="padding-left:0;">
+                                <p><i class="fa fa-calendar" style="color:#2c6fad; width:18px;"></i>
+                                    <strong>Nashr yili:</strong> @Model.NashrYili</p>
+                                <p><i class="fa fa-globe" style="color:#2c6fad; width:18px;"></i>
+                                    <strong>Til:</strong> @Model.Til</p>
+                                <p><i class="fa fa-file-text-o" style="color:#2c6fad; width:18px;"></i>
+                                    <strong>Sahifalar:</strong> @Model.SahifalarSoni</p>
+                            </div>
+                            <div class="col-sm-6" style="padding-left:0;">
+                                <p><i class="fa fa-barcode" style="color:#2c6fad; width:18px;"></i>
+                                    <strong>ISBN:</strong> @(Model.ISBN ?? "—")</p>
+                                <p><i class="fa fa-building" style="color:#2c6fad; width:18px;"></i>
+                                    <strong>Nashriyot:</strong> @(Model.Nashriyot ?? "—")</p>
+                                @if (Model.Narxi.HasValue && Model.Narxi > 0)
+                                {
+                                    <p><i class="fa fa-money" style="color:#27ae60; width:18px;"></i>
+                                        <strong>Narxi:</strong>
+                                        <span style="color:#27ae60; font-weight:700;">@Model.Narxi.Value.ToString("N0") so'm</span>
+                                    </p>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Mavjudlik -->
+                        <div style="background:#f8f9fa; border-radius:6px; padding:12px 14px; margin:12px 0;">
+                            @if (isDigital)
+                            {
+                                @if (forSaleCopies > 0)
+                                {
+                                    <span class="book-badge book-badge-sale">
+                                        <i class="fa fa-shopping-bag"></i>
+                                        @if (isEKitob)  { <text>Elektron format sotuvda</text> }
+                                        else if (isAudio) { <text>Audio format sotuvda</text> }
+                                        else              { <text>Video kurs sotuvda</text> }
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="book-badge book-badge-unavailable">
+                                        <i class="fa fa-gift"></i> Bepul / sotuvda emas
+                                    </span>
+                                }
+                            }
+                            else
+                            {
+                                @if (availableCopies > 0)
+                                {
+                                    <span class="book-badge book-badge-available">
+                                        <i class="fa fa-check-circle"></i> @availableCopies ta nusxa mavjud
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="book-badge book-badge-unavailable">
+                                        <i class="fa fa-times-circle"></i> Hozirda mavjud emas
+                                    </span>
+                                }
+                                @if (forSaleCopies > 0)
+                                {
+                                    <span class="book-badge book-badge-sale" style="margin-left:8px;">
+                                        <i class="fa fa-shopping-bag"></i> @forSaleCopies ta sotuvda
+                                    </span>
+                                }
+                                @if (returnDate.HasValue)
+                                {
+                                    <p style="font-size:13px; color:#856404; margin-top:8px; margin-bottom:0;">
+                                        <i class="fa fa-clock-o"></i>
+                                        <strong>Eng erta qaytarilish:</strong> @returnDate.Value.ToString("dd.MM.yyyy")
+                                    </p>
+                                }
+                            }
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(Model.Tavsif))
+                        {
+                            <p style="color:#555; line-height:1.7; font-size:14px;">@Model.Tavsif</p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tugmalar paneli -->
+            <div class="col-md-3 col-sm-12" style="margin-bottom:20px;">
+                <div class="panel panel-default" style="border-radius:8px;">
+                    <div class="panel-heading" style="font-weight:700; font-size:14px;">
+                        <i class="fa fa-hand-pointer-o"></i> Amallar
+                    </div>
+                    <div class="panel-body">
+
+                        @if (!isAuth)
+                        {
+                            <div class="login-hint" style="margin-bottom:14px;">
+                                <i class="fa fa-info-circle"></i>
+                                <div>
+                                    @(isDigital ? "Sotib olish" : "Bron qilish yoki sotib olish") uchun
+                                    <a href="/Account/Login?returnUrl=@Uri.EscapeDataString(returnUrl)"><strong>tizimga kiring</strong></a>.
+                                </div>
+                            </div>
+                            <a href="/Account/Login?returnUrl=@Uri.EscapeDataString(returnUrl)"
+                               class="btn btn-primary" style="width:100%; margin-bottom:8px;">
+                                <i class="fa fa-sign-in"></i> Kirish
+                            </a>
+                            <a asp-area="" asp-controller="Account" asp-action="Register"
+                               class="btn btn-default" style="width:100%; margin-bottom:8px;">
+                                <i class="fa fa-user-plus"></i> Ro'yxatdan o'tish
+                            </a>
+                        }
+                        else if (!isStaff)
+                        {
+                            @if (isDigital)
+                            {
+                                <!-- ====== DIGITAL MATERIALLAR ====== -->
+                                @if (alreadyPurchased)
+                                {
+                                    <!-- Allaqachon xarid qilingan → yuklab olish -->
+                                    <div style="background:#eafaf1; border:1px solid #27ae60; border-radius:8px;
+                                                padding:12px; margin-bottom:12px; text-align:center;">
+                                        <i class="fa fa-check-circle" style="color:#27ae60; font-size:20px;"></i>
+                                        <p style="margin:6px 0 10px; font-weight:600; color:#27ae60;">
+                                            Sotib olingan ✓
+                                        </p>
+                                        <a asp-area="User" asp-controller="Purchase" asp-action="Download"
+                                           asp-route-kitobId="@Model.Id"
+                                           class="btn btn-success" style="width:100%; margin-bottom:6px;">
+                                            <i class="fa fa-download"></i>
+                                            @if (isEKitob)    { <text>Yuklab olish (PDF/EPUB)</text> }
+                                            else if (isAudio) { <text>Yuklab olish (MP3)</text> }
+                                            else              { <text>Ko'rish / yuklab olish (MP4)</text> }
+                                        </a>
+                                        <a asp-area="User" asp-controller="Purchase" asp-action="DigitalLibrary"
+                                           style="font-size:12px; color:#888; display:block;">
+                                            <i class="fa fa-folder-open"></i> Raqamli kutubxonaga o'tish
+                                        </a>
+                                    </div>
+                                }
+                                else if (forSaleCopies > 0)
+                                {
+                                    <!-- Sotib olish -->
+                                    <form asp-area="User" asp-controller="Cart" asp-action="AddToCart" method="post" style="margin-bottom:8px;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="kitobId" value="@Model.Id" />
+                                        <button type="submit" class="btn btn-success" style="width:100%;">
+                                            <i class="fa fa-shopping-cart"></i>
+                                            @if (isEKitob)    { <text>Elektron kitobni sotib olish</text> }
+                                            else if (isAudio) { <text>Audio kitobni sotib olish</text> }
+                                            else              { <text>Video kursni sotib olish</text> }
+                                        </button>
+                                    </form>
+                                    <p style="font-size:11px; color:#888; text-align:center; margin-bottom:8px;">
+                                        <i class="fa fa-lock"></i> Xarid qilgach darhol yuklab olish mumkin
+                                    </p>
+                                }
+                                else
+                                {
+                                    <!-- Bepul material -->
+                                    @if (!string.IsNullOrEmpty(Model.ElektronManzil))
+                                    {
+                                        <a href="@Model.ElektronManzil" target="_blank"
+                                           class="btn btn-primary" style="width:100%; margin-bottom:8px;">
+                                            <i class="fa fa-download"></i>
+                                            @if (isAudio)     { <text>Tinglash / yuklab olish</text> }
+                                            else if (isVideo) { <text>Ko'rish / yuklab olish</text> }
+                                            else              { <text>Yuklab olish (bepul)</text> }
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-default" style="width:100%; margin-bottom:8px;" disabled>
+                                            <i class="fa fa-gift"></i> Bepul — hozircha mavjud emas
+                                        </button>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <!-- ====== JISMONIY KITOB / JURNAL: bron ham, sotuv ham ====== -->
+
+                                @* --- BRON --- *@
+                                @if (availableCopies > 0)
+                                {
+                                    <form asp-area="User" asp-controller="Reservation" asp-action="Create" method="post" style="margin-bottom:8px;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="kitobId" value="@Model.Id" />
+                                        <button type="submit" class="btn btn-warning" style="width:100%;"
+                                                onclick="return confirm('@(isJurnal ? "Jurnalni" : "Kitobni") bron qilmoqchimisiz?')">
+                                            <i class="fa fa-calendar-plus-o"></i>
+                                            @(isJurnal ? "Jurnalni bron qilish" : "Bron qilish")
+                                        </button>
+                                    </form>
+                                }
+                                else if (returnDate.HasValue)
+                                {
+                                    <form asp-area="User" asp-controller="KutishRoyxati" asp-action="Qoshish" method="post" style="margin-bottom:8px;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="kitobId" value="@Model.Id" />
+                                        <button type="submit" class="btn btn-info" style="width:100%;">
+                                            <i class="fa fa-clock-o"></i> Kutish ro'yxatiga qo'shish
+                                        </button>
+                                    </form>
+                                    <p style="font-size:12px; color:#888; text-align:center;">
+                                        Eng erta qaytarilish: @returnDate.Value.ToString("dd.MM.yyyy")
+                                    </p>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-default" style="width:100%; margin-bottom:8px;" disabled>
+                                        <i class="fa fa-times"></i> Hozirda mavjud emas
+                                    </button>
+                                }
+
+                                @* --- SOTUV --- *@
+                                @if (forSaleCopies > 0)
+                                {
+                                    <form asp-area="User" asp-controller="Cart" asp-action="AddToCart" method="post" style="margin-bottom:8px;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="kitobId" value="@Model.Id" />
+                                        <button type="submit" class="btn btn-success" style="width:100%;">
+                                            <i class="fa fa-shopping-cart"></i>
+                                            @(isJurnal ? "Jurnalni sotib olish" : "Savatga qo'shish")
+                                        </button>
+                                    </form>
+                                }
+
+                                @* --- YETKAZIB BERISH (faqat jismoniy kitob) --- *@
+                                @if (isKitob)
+                                {
+                                    <a asp-area="User" asp-controller="YetkazibBerish" asp-action="Buyurtma"
+                                       asp-route-kitobId="@Model.Id"
+                                       class="btn btn-default" style="width:100%; margin-bottom:8px;">
+                                        <i class="fa fa-truck"></i> Uyga yetkazish
+                                    </a>
+                                }
+                            }
+                        }
+
+                        <!-- Ulashish / Chop etish -->
+                        <hr style="margin:10px 0;" />
+                        <div style="display:flex; gap:6px;">
+                            <button class="btn btn-default btn-sm" style="flex:1;" onclick="libPrint()">
+                                <i class="fa fa-print"></i> Chop
+                            </button>
+                            <button class="btn btn-default btn-sm" style="flex:1;"
+                                    onclick="libShare('@Model.Nomi.Replace("'","\\'")', window.location.href)">
+                                <i class="fa fa-share-alt"></i> Ulash
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Digital material: xarid qilingan bo'lsa yuklab olish -->
+                @if (isDigital && !string.IsNullOrEmpty(Model.ElektronManzil))
+                {
+                    <div class="panel panel-default" style="border-radius:8px; border-left:4px solid
+                         @(isEKitob ? "#2c6fad" : isAudio ? "#f39c12" : "#e74c3c");">
+                        <div class="panel-body text-center">
+                            @if (isEKitob)
+                            {
+                                <i class="fa fa-laptop fa-2x" style="color:#2c6fad; display:block; margin-bottom:6px;"></i>
+                                <p style="font-size:13px; color:#555; margin-bottom:8px;">
+                                    Elektron format: <strong>@(Model.FaylFormati ?? "PDF")</strong>
+                                </p>
+                            }
+                            else if (isAudio)
+                            {
+                                <i class="fa fa-headphones fa-2x" style="color:#f39c12; display:block; margin-bottom:6px;"></i>
+                                <p style="font-size:13px; color:#555; margin-bottom:8px;">
+                                    Audio format: <strong>@(Model.FaylFormati ?? "MP3")</strong>
+                                </p>
+                            }
+                            else
+                            {
+                                <i class="fa fa-video-camera fa-2x" style="color:#e74c3c; display:block; margin-bottom:6px;"></i>
+                                <p style="font-size:13px; color:#555; margin-bottom:8px;">
+                                    Video format: <strong>@(Model.FaylFormati ?? "MP4")</strong>
+                                </p>
+                            }
+                            @if (isAuth && (Model.Narxi == null || Model.Narxi == 0))
+                            {
+                                <a href="@Model.ElektronManzil" target="_blank"
+                                   class="btn btn-primary btn-sm" style="width:100%;">
+                                    <i class="fa fa-download"></i>
+                                    @(isAudio ? "Tinglash" : isVideo ? "Ko'rish" : "Yuklab olish")
+                                </a>
+                            }
+                            else if (!isAuth)
+                            {
+                                <a href="/Account/Login?returnUrl=@Uri.EscapeDataString(returnUrl)"
+                                   class="btn btn-primary btn-sm" style="width:100%;">
+                                    <i class="fa fa-sign-in"></i> Kirish kerak
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Izoh (annotatsiya) -->
+        @if (!string.IsNullOrWhiteSpace(Model.Annotatsiya))
+        {
+            <div class="row" style="margin-top:10px;">
+                <div class="col-md-12">
+                    <div class="panel panel-default" style="border-radius:8px;">
+                        <div class="panel-heading"><strong><i class="fa fa-align-left"></i> Annotatsiya</strong></div>
+                        <div class="panel-body" style="font-size:14px; color:#555; line-height:1.8;">
+                            @Model.Annotatsiya
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

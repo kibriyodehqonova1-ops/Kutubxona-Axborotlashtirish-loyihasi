@@ -1,0 +1,91 @@
+﻿@model IEnumerable<KutubxonaAt.Models.Beruv>
+@{
+    ViewData["Title"] = "Beruvlar";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="content-wrapper">
+    <div class="page-header">
+        <h3 class="page-title">Beruvlar</h3>
+        <a asp-action="IssueFromBron" class="btn btn-primary">+ Bron asosida berish</a>
+    </div>
+
+    <div class="row">
+        <div class="col-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Status filter tabs -->
+                    <ul class="nav nav-tabs mb-4">
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewBag.CurrentStatus == "all" ? "active" : "")"
+                               asp-action="Index" asp-route-status="all">Barcha</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewBag.CurrentStatus == "active" ? "active" : "")"
+                               asp-action="Index" asp-route-status="active">Aktiv</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewBag.CurrentStatus == "overdue" ? "active" : "")"
+                               asp-action="Index" asp-route-status="overdue">Muddati o‘tgan</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewBag.CurrentStatus == "returned" ? "active" : "")"
+                               asp-action="Index" asp-route-status="returned">Qaytarilgan</a>
+                        </li>
+                    </ul>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Beruv raqami</th>
+                                    <th>Foydalanuvchi</th>
+                                    <th>Kitob</th>
+                                    <th>Berilgan sana</th>
+                                    <th>Qaytarish muddati</th>
+                                    <th>Holati</th>
+                                    <th>Amallar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                              @foreach (var item in Model)
+{
+    bool isOverdue = item.Holati == "Berilgan" && item.QaytarishMuddati < DateTime.Now;
+    <tr class="@(isOverdue ? "table-danger" : "")">
+        <td>@item.Id</td>
+        <td>@item.BeruvRaqami</td>
+        <td>@(item.Foydalanuvchi?.Familiya + " " + item.Foydalanuvchi?.Ism ?? "Noma'lum")</td>
+        <td>@(item.KitobNusxa?.Kitob?.Nomi ?? "Noma'lum") (@(item.KitobNusxa?.InventarRaqami ?? "-"))</td>
+        <!-- ... -->
+        <td>
+            @if (item.Holati == "Berilgan")
+            {
+                <form asp-action="Return" method="post" style="display:inline;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@item.Id" />
+                    <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Kitob qaytarilganligini tasdiqlaysizmi?')">Qaytarish</button>
+                </form>
+                <form asp-action="Renew" method="post" style="display:inline;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@item.Id" />
+                    <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('Kitob muddatini 15 kunga uzaytirmoqchimisiz?')">Uzaytirish</button>
+                </form>
+            }
+        </td>
+    </tr>
+}                         </tbody>
+                        </table>
+                    </div>
+
+                    @if (!Model.Any())
+                    {
+                        <div class="alert alert-info text-center mt-3">
+                            Hech qanday beruv topilmadi.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

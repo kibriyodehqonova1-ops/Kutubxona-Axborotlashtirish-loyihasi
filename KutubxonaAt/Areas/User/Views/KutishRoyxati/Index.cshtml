@@ -1,0 +1,130 @@
+@model IEnumerable<KutubxonaAt.Models.KutishRoyxati>
+@{
+    ViewData["Title"] = "Kutish ro'yxatim";
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+    var qaytishSanalar = ViewBag.QaytishSanalar as Dictionary<int, DateTime> ?? new Dictionary<int, DateTime>();
+}
+
+<section class="page-banner services-banner">
+    <div class="container">
+        <div class="banner-header">
+            <h2>Kutish ro'yxatim</h2>
+            <span class="underline center"></span>
+            <p class="lead">Siz kutayotgan kitoblar — mavjud bo'lganda xabardor qilamiz</p>
+        </div>
+        <div class="breadcrumb">
+            <ul>
+                <li><a asp-area="User" asp-controller="Home" asp-action="Index">Bosh sahifa</a></li>
+                <li>Kutish ro'yxati</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<div id="content" class="site-content">
+    <div class="container" style="padding: 30px 15px;">
+
+        @if (TempData["Xabar"] != null)
+        {
+            <div class="alert alert-@(TempData["XabarTuri"] ?? "info") alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+                @TempData["Xabar"]
+            </div>
+        }
+
+        @if (!Model.Any())
+        {
+            <div class="text-center" style="padding: 60px 0;">
+                <i class="fa fa-clock-o fa-4x text-muted"></i>
+                <h3 class="text-muted" style="margin-top: 20px;">Kutish ro'yxatingiz bo'sh</h3>
+                <p class="text-muted">Hozirda mavjud bo'lmagan kitoblarni bron qilganingizda bu yerda ko'rinadi.</p>
+                <a asp-area="User" asp-controller="Book" asp-action="Index" class="btn btn-primary">
+                    <i class="fa fa-search"></i> Kitoblarni ko'rish
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <i class="fa fa-list"></i> Kutayotgan kitoblarim
+                        <span class="badge">@Model.Count()</span>
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Kitob</th>
+                                    <th>Navbat</th>
+                                    <th>Qo'shilgan sana</th>
+                                    <th>Taxminiy mavjudlik</th>
+                                    <th>Amallar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var yozuv in Model.OrderBy(m => m.Tartib))
+                                {
+                                    var mualliflar = yozuv.Kitob?.KitobMualliflari
+                                        .Select(km => km.Muallif?.Ism + " " + km.Muallif?.Familiya)
+                                        .Where(m => m != null)
+                                        .Select(m => m!)
+                                        .ToList() ?? new List<string>();
+
+                                    <tr>
+                                        <td>
+                                            <div style="display:flex; align-items:center; gap:10px;">
+                                                @if (!string.IsNullOrEmpty(yozuv.Kitob?.Rasm))
+                                                {
+                                                    <img src="@yozuv.Kitob.Rasm" style="width:40px;height:55px;object-fit:cover;border-radius:3px;" />
+                                                }
+                                                else
+                                                {
+                                                    <div style="width:40px;height:55px;background:#e9ecef;display:flex;align-items:center;justify-content:center;border-radius:3px;">
+                                                        <i class="fa fa-book text-muted"></i>
+                                                    </div>
+                                                }
+                                                <div>
+                                                    <strong>@yozuv.Kitob?.Nomi</strong>
+                                                    <br /><small class="text-muted">@string.Join(", ", mualliflar.Where(m => m != null))</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="label label-info" style="font-size:14px;">#@yozuv.Tartib</span>
+                                        </td>
+                                        <td>@yozuv.QoshilganSana.ToString("dd.MM.yyyy")</td>
+                                        <td>
+                                            @if (qaytishSanalar.TryGetValue(yozuv.KitobId, out var sana))
+                                            {
+                                                <span class="text-success">
+                                                    <i class="fa fa-calendar"></i>
+                                                    ~@sana.ToString("dd.MM.yyyy")
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Noma'lum</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <form asp-action="Bekor" method="post" style="display:inline;">
+                                                <input type="hidden" name="id" value="@yozuv.Id" />
+                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                    onclick="return confirm('Kutish ro\'yxatidan chiqmoqchimisiz?')">
+                                                    <i class="fa fa-times"></i> Chiqish
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,135 @@
+@{
+    ViewData["Title"] = "Hisobotlar";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2><i class="fa fa-bar-chart"></i> Bosh hisobot paneli</h2>
+
+<div class="row" style="margin-top:20px;">
+    <div class="col-md-3">
+        <div class="panel panel-primary">
+            <div class="panel-body text-center">
+                <i class="fa fa-book fa-2x"></i>
+                <h3>@ViewBag.JamiKitoblar</h3><p>Jami kitoblar</p>
+                <small>@ViewBag.MavjudNusxalar / @ViewBag.JamiNusxalar nusxa mavjud</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="panel panel-info">
+            <div class="panel-body text-center">
+                <i class="fa fa-hand-o-right fa-2x"></i>
+                <h3>@ViewBag.FaolBeruvlar</h3><p>Faol beruvlar</p>
+                <small>@ViewBag.OylikBeruvlar ta bu oy / @ViewBag.JamiBeruvlar jami</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="panel panel-danger">
+            <div class="panel-body text-center">
+                <i class="fa fa-exclamation-triangle fa-2x"></i>
+                <h3>@ViewBag.MuddatiOtgan</h3><p>Muddati o'tgan</p>
+                <small>Kutilayotgan jarima: @(((decimal)ViewBag.KutilayotganJarimalar).ToString("N0")) so'm</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="panel panel-success">
+            <div class="panel-body text-center">
+                <i class="fa fa-star fa-2x"></i>
+                <h3>@ViewBag.FaolAbonementlar</h3><p>Faol abonementlar</p>
+                <small>Yillik daromad: @(((decimal)ViewBag.AbonementDaromad).ToString("N0")) so'm</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Eng ko'p bron qilingan kitoblar -->
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">📚 Eng ko'p bron (bu oy)</h3>
+            </div>
+            <div class="panel-body" style="padding:0;">
+                <ul class="list-group" style="margin:0;">
+                    @{
+                        var bronKitoblar = ViewBag.KopBronKitoblar as dynamic ?? new List<dynamic>();
+                        int rank = 1;
+                        foreach (var item in bronKitoblar)
+                        {
+                            <li class="list-group-item">
+                                <span class="badge">@item.Son</span>
+                                @(rank++). @item.Nomi
+                            </li>
+                        }
+                        if (rank == 1) { <li class="list-group-item text-muted text-center">Ma'lumot yo'q</li> }
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Eng ko'p ijaraga olingan -->
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">📖 Eng ko'p ijaraga olgan (bu oy)</h3>
+            </div>
+            <div class="panel-body" style="padding:0;">
+                <ul class="list-group" style="margin:0;">
+                    @{
+                        var ijara = ViewBag.KopIjaragaOligan as dynamic ?? new List<dynamic>();
+                        int rank2 = 1;
+                        foreach (var item in ijara)
+                        {
+                            <li class="list-group-item">
+                                <span class="badge">@item.Son</span>
+                                @(rank2++). @item.Nomi
+                            </li>
+                        }
+                        if (rank2 == 1) { <li class="list-group-item text-muted text-center">Ma'lumot yo'q</li> }
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Eng ko'p kechiktirgan foydalanuvchilar -->
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">⚠️ Ko'p kechiktirganlar</h3>
+            </div>
+            <div class="panel-body" style="padding:0;">
+                <ul class="list-group" style="margin:0;">
+                    @{
+                        var kechik = ViewBag.KopKechiktirgan as dynamic ?? new List<dynamic>();
+                        int rank3 = 1;
+                        foreach (var item in kechik)
+                        {
+                            <li class="list-group-item">
+                                <span class="badge">@item.Son</span>
+                                @(rank3++). @item.Ism
+                            </li>
+                        }
+                        if (rank3 == 1) { <li class="list-group-item text-muted text-center">Ma'lumot yo'q</li> }
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" style="margin-top:10px;">
+    <div class="col-md-4">
+        <a asp-action="Moliyaviy" class="btn btn-default btn-block">
+            <i class="fa fa-money"></i> Moliyaviy hisobot
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a asp-action="Foydalanuvchilar" class="btn btn-default btn-block">
+            <i class="fa fa-users"></i> Foydalanuvchilar hisoboti
+        </a>
+    </div>
+</div>

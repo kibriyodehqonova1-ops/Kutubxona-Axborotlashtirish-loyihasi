@@ -1,0 +1,209 @@
+@model KutubxonaAt.Models.Order
+@{
+    ViewData["Title"] = $"Buyurtma #{Model.Id}";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="content-wrapper">
+    <div class="page-header">
+        <h3 class="page-title">Buyurtma #@Model.Id</h3>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">Bosh sahifa</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index">Buyurtmalar</a></li>
+                <li class="breadcrumb-item active">Buyurtma #@Model.Id</li>
+            </ol>
+        </nav>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            @TempData["Error"]
+        </div>
+    }
+
+    <div class="row">
+        <!-- Buyurtma ma'lumotlari -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header"><h5 class="mb-0">Buyurtma ma'lumotlari</h5></div>
+                <div class="card-body">
+                    <table class="table table-sm table-borderless mb-0">
+                        <tr><td class="text-muted" style="width:45%">Raqami:</td><td><strong>#@Model.Id</strong></td></tr>
+                        <tr><td class="text-muted">Sana:</td><td>@Model.Sana.ToString("dd.MM.yyyy HH:mm")</td></tr>
+                        <tr><td class="text-muted">To'lov usuli:</td><td>@Model.TolovUsuli</td></tr>
+                        <tr><td class="text-muted">Manzil:</td><td>@(Model.Manzil ?? "Ko'rsatilmagan")</td></tr>
+                        @if (!string.IsNullOrEmpty(Model.Izoh))
+                        {
+                            <tr><td class="text-muted">Izoh:</td><td>@Model.Izoh</td></tr>
+                        }
+                        <tr>
+                            <td class="text-muted">Holat:</td>
+                            <td>
+                                @if (Model.Holati == "Kutilmoqda")
+                                {
+                                    <span class="badge badge-warning">Kutilmoqda</span>
+                                }
+                                else if (Model.Holati == "To'langan")
+                                {
+                                    <span class="badge badge-success">To'langan ✓</span>
+                                }
+                                else if (Model.Holati == "Bekor qilingan")
+                                {
+                                    <span class="badge badge-secondary">Bekor qilingan</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Jami summa:</td>
+                            <td><strong class="text-success" style="font-size:1.1rem;">@Model.JamiSumma.ToString("N0") so'm</strong></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Foydalanuvchi -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header"><h5 class="mb-0">Foydalanuvchi</h5></div>
+                <div class="card-body">
+                    @if (Model.Foydalanuvchi != null)
+                    {
+                        <table class="table table-sm table-borderless mb-0">
+                            <tr><td class="text-muted" style="width:35%">Ismi:</td><td><strong>@Model.Foydalanuvchi.Familiya @Model.Foydalanuvchi.Ism</strong></td></tr>
+                            <tr><td class="text-muted">Email:</td><td>@Model.Foydalanuvchi.Email</td></tr>
+                            <tr><td class="text-muted">Telefon:</td><td>@(Model.Foydalanuvchi.Telefon ?? "—")</td></tr>
+                            <tr><td class="text-muted">Manzil:</td><td>@(Model.Foydalanuvchi.Manzil ?? "—")</td></tr>
+                        </table>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Foydalanuvchi ma'lumotlari topilmadi.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kitoblar ro'yxati -->
+    <div class="card mb-4">
+        <div class="card-header"><h5 class="mb-0">Buyurtmadagi kitoblar</h5></div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Kitob nomi</th>
+                            <th>Nusxa (inventar)</th>
+                            <th>Narxi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int i = 1; }
+                        @foreach (var item in Model.OrderItems)
+                        {
+                            var mualliflar = item.Kitob?.KitobMualliflari != null
+                                ? string.Join(", ", item.Kitob.KitobMualliflari.Select(km => $"{km.Muallif.Familiya} {km.Muallif.Ism}"))
+                                : "";
+                            <tr>
+                                <td>@(i++)</td>
+                                <td>
+                                    <strong>@item.Kitob?.Nomi</strong>
+                                    @if (!string.IsNullOrEmpty(mualliflar))
+                                    {
+                                        <br /><small class="text-muted">@mualliflar</small>
+                                    }
+                                </td>
+                                <td>@(item.KitobNusxa?.InventarRaqami ?? "—")</td>
+                                <td>@item.Narxi.ToString("N0") so'm</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-light">
+                            <td colspan="3" class="text-right"><strong>Jami:</strong></td>
+                            <td><strong>@Model.JamiSumma.ToString("N0") so'm</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Amallar paneli -->
+    <div class="card mb-4">
+        <div class="card-body d-flex flex-wrap gap-2 align-items-center">
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="mdi mdi-arrow-left"></i> Orqaga
+            </a>
+
+            @if (Model.Holati == "Kutilmoqda")
+            {
+                <form asp-action="Confirm" asp-route-id="@Model.Id" method="post" style="display:inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-success"
+                            onclick="return confirm('Buyurtma #@Model.Id ni tasdiqlaysizmi?')">
+                        <i class="mdi mdi-check-circle"></i> Tasdiqlash (To'langan)
+                    </button>
+                </form>
+
+                <button class="btn btn-danger" data-toggle="modal" data-target="#cancelModal">
+                    <i class="mdi mdi-close-circle"></i> Bekor qilish
+                </button>
+            }
+            else if (Model.Holati == "To'langan")
+            {
+                <div class="alert alert-success mb-0 py-2 px-3">
+                    <i class="mdi mdi-check-circle"></i> Buyurtma tasdiqlangan va to'lov qabul qilingan.
+                </div>
+            }
+            else if (Model.Holati == "Bekor qilingan")
+            {
+                <div class="alert alert-secondary mb-0 py-2 px-3">
+                    <i class="mdi mdi-close-circle"></i> Buyurtma bekor qilingan.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Bekor qilish modal -->
+@if (Model.Holati == "Kutilmoqda")
+{
+    <div class="modal fade" id="cancelModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form asp-action="Cancel" asp-route-id="@Model.Id" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="modal-header">
+                        <h5 class="modal-title">Buyurtmani bekor qilish</h5>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Buyurtma <strong>#@Model.Id</strong> ni bekor qilmoqchimisiz?</p>
+                        <p class="text-muted small">Nusxalar avtomatik qaytariladi va yana sotuvga qo'yiladi.</p>
+                        <div class="form-group">
+                            <label>Bekor qilish sababi (ixtiyoriy):</label>
+                            <input type="text" name="sabab" class="form-control" placeholder="Masalan: foydalanuvchi so'rovi..." />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Yopish</button>
+                        <button type="submit" class="btn btn-danger">Bekor qilish</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}

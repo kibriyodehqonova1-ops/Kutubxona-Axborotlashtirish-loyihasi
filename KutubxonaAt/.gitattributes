@@ -1,0 +1,8 @@
+# Windows (CRLF) va boshqa tizimlar orasidagi keraksiz farqlarni oldini oladi
+* text=auto
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.pdf binary

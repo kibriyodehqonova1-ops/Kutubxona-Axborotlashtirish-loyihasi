@@ -1,0 +1,255 @@
+﻿@using KutubxonaAt.Models
+@model KutubxonaAt.Models.Kitob
+@{
+    ViewData["Title"] = Model?.Nomi ?? "Kitob tafsilotlari";
+    Layout = "/Views/Shared/_Layout.cshtml";
+
+    // Mualliflarni birlashtirish
+    var mualliflar = Model?.KitobMualliflari?
+        .Where(km => km.Muallif != null)
+        .Select(km => $"{km.Muallif.Familiya} {km.Muallif.Ism}") ?? new List<string>();
+
+    // Kategoriyalar
+    var kategoriyalar = Model?.KitobKategoriyalari?
+        .Where(kk => kk.Kategoriya != null)
+        .Select(kk => kk.Kategoriya.Nomi) ?? new List<string>();
+
+    // Media turiga mos icon class
+    var mediaIconClass = Model?.MediaTuri switch
+    {
+        Kitob.MediaType.ElektronKitob => "blue-icon",
+        Kitob.MediaType.AudioKitob => "yellow-icon",
+        Kitob.MediaType.Jurnal => "green-icon",
+        Kitob.MediaType.Video => "red-icon",
+        _ => "light-green-icon"
+    };
+
+    // O‘rtacha reyting
+    var avgRating = Model?.OrtachaBaho ?? 0;
+}
+
+<!-- Start: Page Banner -->
+<section class="page-banner services-banner">
+    <div class="container">
+        <div class="banner-header">
+            <h2>Kitoblar va media ro‘yxati</h2>
+            <span class="underline center"></span>
+            <p class="lead">Kutubxona fondidagi barcha kitoblar va media materiallar</p>
+        </div>
+        <div class="breadcrumb">
+            <ul>
+                <li><a asp-area="User" asp-controller="Home" asp-action="Index">Bosh sahifa</a></li>
+                <li><a asp-area="User" asp-controller="Book" asp-action="Index">Kitoblar va media</a></li>
+                <li>@Model?.Nomi</li>
+            </ul>
+        </div>
+    </div>
+</section>
+<!-- End: Page Banner -->
+
+<div id="content" class="site-content">
+    <div id="primary" class="content-area">
+        <main id="main" class="site-main">
+            <div class="booksmedia-detail-main">
+                <div class="container">
+                    <!-- Start: Search Section -->
+                    <div class="row">
+                        <section class="search-filters">
+                            <div class="container">
+                                <div class="filter-box">
+                                    <h3>Kutubxonadan nimani qidiryapsiz?</h3>
+                                    <form method="get" asp-action="Index" asp-controller="Book">
+                                        <div class="col-md-4 col-sm-6">
+                                            <div class="form-group">
+                                                <input class="form-control" placeholder="Kalit so‘z bo‘yicha qidirish" id="keywords" name="keywords" type="text">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 col-sm-6">
+                                            <div class="form-group">
+                                                <select name="catalog" class="form-control">
+                                                    <option>Katalogni tanlang</option>
+                                                    <option>Asosiy fond</option>
+                                                    <option>Elektron fond</option>
+                                                    <option>Nodir kitoblar</option>
+                                                    <option>Dissertatsiyalar</option>
+                                                    <option>Davriy nashrlar</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 col-sm-6">
+                                            <div class="form-group">
+                                                <select name="category" class="form-control">
+                                                    <option>Barcha kategoriyalar</option>
+                                                    @if (ViewBag.Categories != null)
+                                                    {
+                                                        foreach (var cat in (ViewBag.Categories as List<Kategoriya>)!)
+                                                        {
+                                                            <option>@cat.Nomi</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-sm-6">
+                                            <div class="form-group">
+                                                <input class="form-control" type="submit" value="Qidirish">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <!-- End: Search Section -->
+
+                    <div class="row">
+                        <!-- Main content -->
+                        <div class="col-md-9 col-md-push-3">
+                            <div class="booksmedia-detail-box">
+                                <div class="single-book-box">
+                                    <div class="post-thumbnail">
+                                        <div class="book-list-icon @mediaIconClass"></div>
+                                        <img alt="@Model?.Nomi" src="@(string.IsNullOrEmpty(Model?.Rasm) ? "/images/default-book.jpg" : Model.Rasm)" />
+                                    </div>
+                                    <div class="post-detail">
+                                        <!-- Ijtimoiy tarmoqlar -->
+                                        <div class="books-social-sharing">
+                                            <ul>
+                                                <li><a href="#" target="_blank"><i class="fa fa-facebook"></i></a></li>
+                                                <li><a href="#" target="_blank"><i class="fa fa-twitter"></i></a></li>
+                                                <li><a href="#" target="_blank"><i class="fa fa-google-plus"></i></a></li>
+                                                <li><a href="#" target="_blank"><i class="fa fa-rss"></i></a></li>
+                                                <li><a href="#" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+                                            </ul>
+                                        </div>
+                                        <!-- Qo‘shimcha tugmalar -->
+                                        <div class="optional-links">
+                                            <ul>
+                                                <li><a href="#" title="Savatga qo‘shish"><i class="fa fa-shopping-cart"></i></a></li>
+                                                <li><a href="#" title="Yoqtirish"><i class="fa fa-heart"></i></a></li>
+                                                <li><a href="#" title="Pochta"><i class="fa fa-envelope"></i></a></li>
+                                                <li><a href="#" title="Qidirish"><i class="fa fa-search"></i></a></li>
+                                                <li><a href="#" title="Chop etish"><i class="fa fa-print"></i></a></li>
+                                            </ul>
+                                        </div>
+                                        <!-- Asosiy ma’lumotlar -->
+                                        <header class="entry-header">
+                                            <h2 class="entry-title">@Model?.Nomi</h2>
+                                            <ul>
+                                                <li><strong>Muallif:</strong> @(mualliflar.Any() ? string.Join(", ", mualliflar) : "Noma'lum")</li>
+                                                <li><strong>ISBN:</strong> @(string.IsNullOrEmpty(Model?.ISBN) ? "—" : Model.ISBN)</li>
+                                                <li>
+                                                    <div class="rating">
+                                                        <strong>Reyting:</strong>
+                                                        @for (int i = 1; i <= 5; i++)
+                                                        {
+                                                            if (i <= Math.Floor(avgRating))
+                                                            {
+                                                                <span>★</span>
+                                                            }
+                                                            else if (i - 0.5 <= avgRating && avgRating % 1 != 0)
+                                                            {
+                                                                <span>½</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>☆</span>
+                                                            }
+                                                        }
+                                                        <span>(@(Model?.BaholarSoni ?? 0) ta baho)</span>
+                                                    </div>
+                                                </li>
+                                                <li><strong>Nashr yili:</strong> @(Model?.NashrYili?.ToString() ?? "—")</li>
+                                                <li><strong>Nashriyot:</strong> @(Model?.Nashriyot ?? "—") @(Model?.Shahar != null ? $", {Model.Shahar}" : "")</li>
+                                                @if (Model?.NusxalarSoni > 0)
+                                                {
+                                                    <li><strong>Mavjud nusxalar:</strong> @(Model?.MavjudNusxalar ?? 0) / @(Model?.NusxalarSoni ?? 0)</li>
+                                                }
+                                            </ul>
+                                        </header>
+                                        <!-- Tugmalar (Buyurtma berish -> Bron controller) -->
+                                        <div class="entry-content post-buttons">
+                                            <a asp-area="User" asp-controller="Bron" asp-action="Create" asp-route-bookId="@Model?.Id" class="btn btn-dark-gray">Buyurtma berish</a>
+                                            <a href="#" class="btn btn-dark-gray">Namunani ko‘rish</a>
+                                            <a href="#" class="btn btn-dark-gray">O‘xshash kitoblar</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tavsif va qo‘shimcha ma’lumotlar -->
+                                <p><strong>Qisqacha:</strong> @(Model?.Tavsif ?? "Tavsif mavjud emas")</p>
+
+                                @if (Model?.SahifalarSoni != null)
+                                {
+                                    <ul class="detail-page-listing">
+                                        <li><strong>Sahifalar soni:</strong> @Model.SahifalarSoni bet.</li>
+                                        <li><strong>Format:</strong> @(Model?.MediaTuri.ToString())</li>
+                                        <li><strong>Til:</strong> @(Model?.Til?.ToUpper() ?? "—")</li>
+                                        @if (kategoriyalar.Any())
+                                        {
+                                            <li><strong>Janr:</strong> @string.Join(", ", kategoriyalar)</li>
+                                        }
+                                    </ul>
+                                }
+
+                                <p><strong>Qo‘shimcha ma’lumot:</strong> @(Model?.Annotatsiya ?? "Qo‘shimcha ma’lumot mavjud emas.")</p>
+
+                                @if (Model?.KitobNusxalari != null && Model.KitobNusxalari.Any())
+                                {
+                                    <h4>Nusxalar ro‘yxati</h4>
+                                    <ul>
+                                        @foreach (var nusxa in Model.KitobNusxalari.Take(3))
+                                        {
+                                            <li><strong>Inventar raqami:</strong> @nusxa.InventarRaqami – Holati: @nusxa.Holati – Joylashuv: @(nusxa.Joylashuv ?? "—")</li>
+                                        }
+                                    </ul>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Sidebar -->
+                        <div class="col-md-3 col-md-pull-9">
+                            <div class="sidebar">
+                                <div class="widget widget-categories">
+                                    <h3 class="widget-title">Kategoriyalar</h3>
+                                    <ul>
+                                        @if (ViewBag.Categories != null)
+                                        {
+                                            foreach (var cat in (ViewBag.Categories as List<Kategoriya>)!)
+                                            {
+                                                <li><a asp-action="Index" asp-controller="Book" asp-route-categoryId="@cat.Id">@cat.Nomi</a></li>
+                                                if (cat.IchkiKategoriyalar != null && cat.IchkiKategoriyalar.Any())
+                                                {
+                                                    <ul style="margin-left: 15px;">
+                                                        @foreach (var child in cat.IchkiKategoriyalar)
+                                                        {
+                                                            <li><a asp-action="Index" asp-controller="Book" asp-route-categoryId="@child.Id">- @child.Nomi</a></li>
+                                                        }
+                                                    </ul>
+                                                }
+                                            }
+                                        }
+                                    </ul>
+                                </div>
+
+                                <div class="widget widget-recent-posts">
+                                    <h3 class="widget-title">Yaqinda qo‘shilganlar</h3>
+                                    <ul>
+                                        @if (ViewBag.RecentBooks != null)
+                                        {
+                                            foreach (var recent in (ViewBag.RecentBooks as List<Kitob>)!)
+                                            {
+                                                var recentMuallif = recent.KitobMualliflari?.FirstOrDefault()?.Muallif;
+                                                <li><a asp-action="Details" asp-route-id="@recent.Id">@recent.Nomi</a> @(recentMuallif != null ? $"- {recentMuallif.Familiya}" : "")</li>
+                                            }
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>

@@ -1,0 +1,59 @@
+@model KutubxonaAt.Models.YetkazibBerish
+@{
+    ViewData["Title"] = "Yetkazib berish detallari";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <i class="fa fa-truck"></i> Yetkazib berish #@Model.KuzatuvRaqami
+                </h3>
+            </div>
+            <div class="panel-body">
+                <table class="table table-condensed">
+                    <tr><td width="200"><strong>Foydalanuvchi</strong></td><td>@Model.Foydalanuvchi?.Ism @Model.Foydalanuvchi?.Familiya</td></tr>
+                    <tr><td><strong>Email</strong></td><td>@Model.Foydalanuvchi?.Email</td></tr>
+                    <tr><td><strong>Telefon</strong></td><td>@Model.TelefонRaqam</td></tr>
+                    <tr><td><strong>Kitob</strong></td><td>@(Model.Beruv?.KitobNusxa?.Kitob?.Nomi ?? Model.Bron?.Kitob?.Nomi ?? "—")</td></tr>
+                    <tr><td><strong>Manzil</strong></td><td>@Model.Manzil, @Model.Shahar</td></tr>
+                    <tr><td><strong>Narx</strong></td><td>@(Model.YetkazishNarxi == 0 ? "Bepul" : Model.YetkazishNarxi.ToString("N0") + " so'm")</td></tr>
+                    <tr><td><strong>Buyurtma sanasi</strong></td><td>@Model.BuyurtmaSana.ToString("dd.MM.yyyy HH:mm")</td></tr>
+                    <tr><td><strong>Taxminiy yetkazish</strong></td><td>@(Model.YetkazilishKutilganSana?.ToString("dd.MM.yyyy") ?? "—")</td></tr>
+                    <tr><td><strong>Haydovchi</strong></td><td>@(Model.HaydovchiMaʼlumoti ?? "Tayinlanmagan")</td></tr>
+                    <tr><td><strong>Holat</strong></td>
+                    <td>
+                        <span class="label label-@(Model.Holati == "Tayyorlanmoqda" ? "warning" : Model.Holati == "Yo'lda" ? "info" : "success")">
+                            @Model.Holati
+                        </span>
+                    </td></tr>
+                    <tr><td><strong>Izoh</strong></td><td>@Model.Izoh</td></tr>
+                </table>
+
+                @if (Model.Holati != "Yetkazildi" && Model.Holati != "Bekor qilingan")
+                {
+                    <hr />
+                    <form asp-action="HolatOzgartir" method="post" class="form-inline">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <div class="form-group">
+                            <select name="yangiHolat" class="form-control">
+                                <option value="Tayyorlanmoqda">Tayyorlanmoqda</option>
+                                <option value="Yo'lda">Yo'lda</option>
+                                <option value="Yetkazildi">Yetkazildi</option>
+                                <option value="Bekor qilingan">Bekor qilingan</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin: 0 10px;">
+                            <input name="haydovchi" class="form-control" placeholder="Haydovchi ismi" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Holatni yangilash</button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<a asp-action="Index" class="btn btn-default"><i class="fa fa-arrow-left"></i> Orqaga</a>

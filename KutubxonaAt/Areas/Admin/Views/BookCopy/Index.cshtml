@@ -1,0 +1,132 @@
+﻿@model IEnumerable<KutubxonaAt.Models.KitobNusxa>
+@{
+    ViewData["Title"] = "Kitob nusxalari";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    var bookId = ViewBag.BookId;
+    var bookTitle = ViewBag.BookTitle;
+}
+
+<div class="content-wrapper">
+    <div class="page-header">
+        <h3 class="page-title">@(bookTitle != null ? $"{bookTitle} nusxalari" : "Barcha nusxalar")</h3>
+        @if (bookId != null)
+        {
+            <a asp-action="Create" asp-route-bookId="@bookId" class="btn btn-primary">+ Yangi nusxa qo‘shish</a>
+        }
+    </div>
+
+    <div class="row">
+        <div class="col-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Kitob</th>
+                                    <th>Inventar raqami</th>
+                                    <th>BarKod</th>
+                                    <th>Narxi</th>
+                                    <th>Holati</th>
+                                    <th>Jismoniy holati</th>
+                                    <th>Joylashuv</th>
+                                    <th>Sotuvda</th>
+                                    <th>Amallar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@item.Kitob?.Nomi</td>
+                                        <td>@item.InventarRaqami</td>
+                                        <td>@item.BarKod</td>
+                                        <td>@(item.Narxi.HasValue ? item.Narxi.Value.ToString("N0") + " so’m" : "—")</td>
+                                        <td>
+                                            @if (item.Holati == "Mavjud")
+                                            {
+                                                <span class="badge bg-success">Mavjud</span>
+                                            }
+                                            else if (item.Holati == "Berilgan")
+                                            {
+                                                <span class="badge bg-warning">Berilgan</span>
+                                            }
+                                            else if (item.Holati == "Ta’mirda")
+                                            {
+                                                <span class="badge bg-info">Ta’mirda</span>
+                                            }
+                                            else if (item.Holati == "Sotilgan")
+                                            {
+                                                <span class="badge bg-secondary">Sotilgan</span>
+                                            }
+                                            else if (item.Holati == "Yo’qolgan")
+                                            {
+                                                <span class="badge bg-danger">Yo’qolgan</span>
+                                            }
+                                            else
+                                            {
+                                                @item.Holati
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (item.JismoniyHolati == "Yangi")
+                                            {
+                                                <span class="badge bg-success">Yangi</span>
+                                            }
+                                            else if (item.JismoniyHolati == "Yaxshi")
+                                            {
+                                                <span class="badge bg-info">Yaxshi</span>
+                                            }
+                                            else if (item.JismoniyHolati == "Eskirgan")
+                                            {
+                                                <span class="badge bg-secondary">Eskirgan</span>
+                                            }
+                                            else if (item.JismoniyHolati == "Shikastlangan")
+                                            {
+                                                <span class="badge bg-danger">Shikastlangan</span>
+                                            }
+                                            else
+                                            {
+                                                @item.JismoniyHolati
+                                            }
+                                        </td>
+                                        <td>@item.Joylashuv</td>
+                                        <td class="text-center">
+                                            <form asp-action="ToggleSale" method="post" style="display:inline;">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@item.Id" />
+                                                @if (item.SotuvgaQoyilgan)
+                                                {
+                                                    <button type="submit" class="btn btn-sm btn-success" title="Sotuvdan olish uchun bosing">
+                                                        <i class="mdi mdi-tag-check"></i> Sotuvda
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <button type="submit" class="btn btn-sm btn-outline-secondary"
+                                                            @(item.Holati != "Mavjud" ? "disabled title=\"Faqat ‘Mavjud’ holatida sotuvga qo’yish mumkin\"" : "title=\"Sotuvga qo’yish\"")>
+                                                        <i class="mdi mdi-tag-off"></i> Sotuvda emas
+                                                    </button>
+                                                }
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Tahrirlash</a>
+                                            <form asp-action="Delete" method="post" style="display:inline;">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@item.Id" />
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm(‘Haqiqatan ham bu nusxani o\’chirmoqchimisiz?’)">O’chirish</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

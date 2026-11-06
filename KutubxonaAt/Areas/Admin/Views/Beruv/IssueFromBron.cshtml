@@ -1,0 +1,63 @@
+﻿@model IEnumerable<KutubxonaAt.Models.Bron>
+@{
+    ViewData["Title"] = "Bronlardan kitob berish";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="content-wrapper">
+    <div class="page-header">
+        <h3 class="page-title">Faol bronlar</h3>
+    </div>
+
+    <div class="row">
+        <div class="col-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Foydalanuvchi</th>
+                                    <th>Kitob</th>
+                                    <th>Bron qilingan sana</th>
+                                    <th>Amal qilish muddati</th>
+                                    <th>Izoh</th>
+                                    <th>Amallar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var bron in Model)
+                                {
+                                    <tr>
+                                        <td>@bron.Id</td>
+                                        <td>@(bron.Foydalanuvchi != null ? bron.Foydalanuvchi.Familiya + " " + bron.Foydalanuvchi.Ism : "Maʼlumot yo‘q")</td>
+                                        <td>@(bron.Kitob?.Nomi ?? "Maʼlumot yo‘q")</td>
+                                        <td>@bron.BronSana.ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td>@bron.AmalMuddati.ToString("dd.MM.yyyy")</td>
+                                        <td>@bron.Izoh</td>
+                                        <td>
+                                            <form asp-action="IssueFromBron" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="bronId" value="@bron.Id" />
+                                                <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Ushbu bron asosida kitobni berishni tasdiqlaysizmi?')">
+                                                    <i class="fas fa-hand-holding-heart"></i> Berish
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    @if (!Model.Any())
+                    {
+                        <div class="alert alert-info text-center mt-3">
+                            Hozircha faol bronlar mavjud emas.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

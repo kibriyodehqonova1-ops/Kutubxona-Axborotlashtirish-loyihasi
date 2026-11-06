@@ -1,0 +1,83 @@
+@{
+    ViewData["Title"] = "To'lov";
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+    int orderId = ViewBag.OrderId;
+    decimal amount = ViewBag.Amount;
+}
+
+<section class="page-banner services-banner">
+    <div class="container">
+        <div class="banner-header">
+            <h2>To'lov sahifasi</h2>
+            <span class="underline center"></span>
+            <p class="lead">Buyurtma #@orderId uchun to'lov</p>
+        </div>
+    </div>
+</section>
+
+<div class="container" style="padding: 40px 15px;">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default" style="text-align:center; padding:30px;">
+                <div class="panel-body">
+                    <div style="margin-bottom:20px;">
+                        <i class="fa fa-check-circle fa-4x" style="color:#27ae60;"></i>
+                    </div>
+                    <h3 style="color:#27ae60;">Buyurtma qabul qilindi!</h3>
+                    <p style="font-size:16px; margin:10px 0;">
+                        <strong>Buyurtma:</strong> #@orderId
+                    </p>
+                    <p style="font-size:18px; font-weight:700; color:#2c6fad; margin-bottom:20px;">
+                        @amount.ToString("N0") so'm
+                    </p>
+
+                    <div style="background:#f8f9fa; border-radius:8px; padding:16px; margin-bottom:20px; text-align:left;">
+                        <p style="font-weight:700; margin-bottom:12px;">To'lov usulini tanlang:</p>
+                        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+                            <button onclick="simulatePayment('click')" class="btn btn-default" style="padding:10px 20px;">
+                                <i class="fa fa-mobile fa-lg" style="color:#0099ff;"></i><br />
+                                <small>Click</small>
+                            </button>
+                            <button onclick="simulatePayment('payme')" class="btn btn-default" style="padding:10px 20px;">
+                                <i class="fa fa-credit-card fa-lg" style="color:#00ccaa;"></i><br />
+                                <small>Payme</small>
+                            </button>
+                            <button onclick="simulatePayment('uzcard')" class="btn btn-default" style="padding:10px 20px;">
+                                <i class="fa fa-bank fa-lg" style="color:#003399;"></i><br />
+                                <small>UzCard</small>
+                            </button>
+                            <button onclick="simulatePayment('naqd')" class="btn btn-default" style="padding:10px 20px;">
+                                <i class="fa fa-money fa-lg" style="color:#27ae60;"></i><br />
+                                <small>Naqd</small>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="paymentResult" style="display:none;"></div>
+
+                    <a asp-area="User" asp-controller="Purchase" asp-action="Index" class="btn btn-primary" style="margin-top:10px;">
+                        <i class="fa fa-list"></i> Buyurtmalarimga o'tish
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function simulatePayment(method) {
+    var names = { click: 'Click', payme: 'Payme', uzcard: 'UzCard', naqd: "Naqd to'lov" };
+    var result = document.getElementById('paymentResult');
+    result.style.display = 'block';
+    result.innerHTML = '<div class="alert alert-info"><i class="fa fa-spinner fa-spin"></i> ' + names[method] + ' orqali to\'lov amalga oshirilmoqda...</div>';
+
+    setTimeout(function() {
+        result.innerHTML = '<div class="alert alert-success">' +
+            '<i class="fa fa-check-circle"></i> <strong>To\'lov muvaffaqiyatli!</strong><br/>' +
+            names[method] + ' orqali <strong>@amount.ToString("N0") so\'m</strong> to\'landi. ' +
+            'Buyurtma #@orderId tasdiqlandi.</div>';
+    }, 2000);
+}
+</script>
+}

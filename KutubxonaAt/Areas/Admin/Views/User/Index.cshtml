@@ -1,0 +1,99 @@
+﻿@using KutubxonaAt.ViewModels.User
+@model List<UserIndexViewModel>
+@{
+    ViewData["Title"] = "Foydalanuvchilar";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="content-wrapper">
+    <div class="page-header">
+        <h3 class="page-title">Foydalanuvchilar</h3>
+    </div>
+
+    <div class="row">
+        <div class="col-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <form asp-action="Index" method="get">
+                                <div class="input-group">
+                                    <input type="text" name="search" class="form-control" placeholder="Ism, familiya, email, talaba ID bo‘yicha qidirish" value="@ViewBag.Search" />
+                                    <button type="submit" class="btn btn-primary">Qidirish</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Ism</th>
+                                    <th>Familiya</th>
+                                    <th>Email</th>
+                                    <th>Telefon</th>
+                                    <th>Turi</th>
+                                    <th>Rollar</th>
+                                    <th>Faol</th>
+                                    <th>Amal muddati</th>
+                                    <th>Amallar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in Model)
+                                {
+                                    <tr>
+                                        <td>@user.Id</td>
+                                        <td>@user.Ism</td>
+                                        <td>@user.Familiya</td>
+                                        <td>@user.Email</td>
+                                        <td>@user.Telefon</td>
+                                        <td>@user.Turi</td>
+                                        <td>@user.Roles</td>
+                                        <td>
+                                            @if (user.Faol)
+                                            {
+                                                <span class="badge bg-success">Faol</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Faol emas</span>
+                                            }
+                                        </td>
+                                        <td>@(user.AmalMuddati?.ToString("dd.MM.yyyy") ?? "-")</td>
+                                        <td>
+                                            <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-sm btn-warning">Tahrirlash</a>
+                                            <form asp-action="Delete" method="post" style="display:inline;">
+                                                <input type="hidden" name="id" value="@user.Id" />
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Haqiqatan ham bu foydalanuvchini o‘chirmoqchimisiz?')">O‘chirish</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@{
+    // ViewModel for Index
+}
+public class UserIndexViewModel
+{
+    public string Id { get; set; } = string.Empty;
+    public string Ism { get; set; } = string.Empty;
+    public string Familiya { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string? Telefon { get; set; }
+    public string Turi { get; set; } = string.Empty;
+    public bool Faol { get; set; }
+    public DateTime? AmalMuddati { get; set; }
+    public string Roles { get; set; } = string.Empty;
+}

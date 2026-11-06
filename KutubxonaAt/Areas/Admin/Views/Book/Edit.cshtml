@@ -1,0 +1,192 @@
+﻿@using static KutubxonaAt.Models.Kitob
+@model KutubxonaAt.ViewModels.Kitob.KitobCrudViewModel
+@{
+    ViewData["Title"] = "Kitobni tahrirlash";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="content-wrapper">
+    <div class="page-header">
+        <h3 class="page-title">Kitobni tahrirlash</h3>
+    </div>
+
+    <div class="row">
+        <div class="col-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Kitob maʼlumotlari</h4>
+                    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="Id" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group">
+                            <label asp-for="Nomi"></label>
+                            <input asp-for="Nomi" class="form-control" />
+                            <span asp-validation-for="Nomi" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="AslNomi"></label>
+                            <input asp-for="AslNomi" class="form-control" />
+                            <span asp-validation-for="AslNomi" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="ISBN"></label>
+                            <input asp-for="ISBN" class="form-control" />
+                            <span asp-validation-for="ISBN" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="MediaTuri"></label>
+                            <select asp-for="MediaTuri" class="form-control" asp-items="Html.GetEnumSelectList<MediaType>()"></select>
+                            <span asp-validation-for="MediaTuri" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="NashrYili"></label>
+                            <input asp-for="NashrYili" class="form-control" />
+                            <span asp-validation-for="NashrYili" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="SahifalarSoni"></label>
+                            <input asp-for="SahifalarSoni" class="form-control" />
+                            <span asp-validation-for="SahifalarSoni" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Nashriyot"></label>
+                            <input asp-for="Nashriyot" class="form-control" />
+                            <span asp-validation-for="Nashriyot" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Shahar"></label>
+                            <input asp-for="Shahar" class="form-control" />
+                            <span asp-validation-for="Shahar" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Til"></label>
+                            <input asp-for="Til" class="form-control" />
+                            <span asp-validation-for="Til" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="UDK"></label>
+                            <input asp-for="UDK" class="form-control" />
+                            <span asp-validation-for="UDK" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="BBK"></label>
+                            <input asp-for="BBK" class="form-control" />
+                            <span asp-validation-for="BBK" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="MuallifBelgisi"></label>
+                            <input asp-for="MuallifBelgisi" class="form-control" />
+                            <span asp-validation-for="MuallifBelgisi" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Narxi"></label>
+                            <input asp-for="Narxi" class="form-control" type="number" step="0.01" />
+                            <span asp-validation-for="Narxi" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="NusxalarSoni"></label>
+                            <input asp-for="NusxalarSoni" class="form-control" />
+                            <span asp-validation-for="NusxalarSoni" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Tavsif"></label>
+                            <textarea asp-for="Tavsif" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Tavsif" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Annotatsiya"></label>
+                            <textarea asp-for="Annotatsiya" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Annotatsiya" class="text-danger"></span>
+                        </div>
+
+                        <!-- Rasm qismi -->
+                        <div class="form-group">
+                            <label>Joriy rasm</label>
+                            @if (!string.IsNullOrEmpty(Model.Rasm))
+                            {
+                                <div>
+                                    <img src="@Model.Rasm" style="max-height: 100px;" />
+                                    <p class="text-muted">@System.IO.Path.GetFileName(Model.Rasm)</p>
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted">Rasm mavjud emas</p>
+                            }
+                            <label asp-for="RasmFayl">Yangi rasm yuklash (agar o‘zgartirmoqchi bo‘lsangiz)</label>
+                            <input asp-for="RasmFayl" type="file" class="form-control" accept="image/*" />
+                        </div>
+
+                        <!-- Raqamli nusxa fayli -->
+                        <div class="form-group" id="digitalFileGroup" style="@(Model.MediaTuri != MediaType.Kitob ? "display:block;" : "display:none;")">
+                            <label>Joriy raqamli fayl</label>
+                            @if (!string.IsNullOrEmpty(Model.ElektronManzil))
+                            {
+                                <p class="text-muted">@System.IO.Path.GetFileName(Model.ElektronManzil)</p>
+                            }
+                            else
+                            {
+                                <p class="text-muted">Fayl mavjud emas</p>
+                            }
+                            <label asp-for="ElektronFayl">Yangi fayl yuklash (agar o‘zgartirmoqchi bo‘lsangiz)</label>
+                            <input asp-for="ElektronFayl" type="file" class="form-control" accept=".pdf,.epub,.mp3,.mp4" />
+                        </div>
+
+                        <!-- Mualliflar va kategoriyalar -->
+                        <div class="form-group">
+                            <label>Mualliflar</label>
+                            <select asp-for="SelectedAuthorIds" asp-items="Model.AvailableAuthors" class="form-control" multiple="multiple"></select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Kategoriyalar</label>
+                            <select asp-for="SelectedCategoryIds" asp-items="Model.AvailableCategories" class="form-control" multiple="multiple"></select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary me-2">Saqlash</button>
+                        <a asp-action="Index" class="btn btn-light">Bekor qilish</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var mediaTypeSelect = $('#MediaTuri');
+            var digitalFileGroup = $('#digitalFileGroup');
+
+            function toggleDigitalFileGroup() {
+                var selected = mediaTypeSelect.val();
+                // 0 = MediaType.Kitob (jismoniy kitob)
+                if (selected && selected !== '0') {
+                    digitalFileGroup.show();
+                } else {
+                    digitalFileGroup.hide();
+                }
+            }
+
+            mediaTypeSelect.change(toggleDigitalFileGroup);
+            toggleDigitalFileGroup(); // sahifa yuklanganda tekshirish
+        });
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}

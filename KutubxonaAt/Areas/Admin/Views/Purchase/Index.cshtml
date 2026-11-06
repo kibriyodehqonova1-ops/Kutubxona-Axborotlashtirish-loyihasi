@@ -1,0 +1,185 @@
+@model IEnumerable<KutubxonaAt.Models.Order>
+@{
+    ViewData["Title"] = "Buyurtmalar boshqaruvi";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    string? holatFilter = ViewBag.Holat;
+    string? kw = ViewBag.Keywords;
+}
+
+<div class="content-wrapper">
+    <div class="page-header">
+        <h3 class="page-title">Buyurtmalar boshqaruvi</h3>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">Bosh sahifa</a></li>
+                <li class="breadcrumb-item active">Buyurtmalar</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Statistika kartalar -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-warning text-center p-3">
+                <h5 class="text-warning mb-1">Kutilmoqda</h5>
+                <h2 class="mb-0">@ViewBag.KutilmoqdaCount</h2>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-success text-center p-3">
+                <h5 class="text-success mb-1">To'langan</h5>
+                <h2 class="mb-0">@ViewBag.TolananCount</h2>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-secondary text-center p-3">
+                <h5 class="text-secondary mb-1">Bekor qilingan</h5>
+                <h2 class="mb-0">@ViewBag.BekorCount</h2>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-primary text-center p-3">
+                <h5 class="text-primary mb-1">Jami daromad</h5>
+                <h4 class="mb-0">@(((decimal)ViewBag.JamiDaromad).ToString("N0")) so'm</h4>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            @TempData["Error"]
+        </div>
+    }
+
+    <!-- Filtr -->
+    <div class="card mb-3">
+        <div class="card-body py-2">
+            <form method="get" class="form-inline gap-2">
+                <input type="text" name="keywords" value="@kw" class="form-control form-control-sm mr-2"
+                       placeholder="Foydalanuvchi yoki kitob..." style="min-width:220px;" />
+                <select name="holat" class="form-control form-control-sm mr-2">
+                    <option value="">Barcha holatlar</option>
+                    <option value="Kutilmoqda" selected="@(holatFilter == "Kutilmoqda")">Kutilmoqda</option>
+                    <option value="To'langan" selected="@(holatFilter == "To'langan")">To'langan</option>
+                    <option value="Bekor qilingan" selected="@(holatFilter == "Bekor qilingan")">Bekor qilingan</option>
+                </select>
+                <button type="submit" class="btn btn-primary btn-sm">Qidirish</button>
+                <a href="@Url.Action("Index")" class="btn btn-secondary btn-sm ml-1">Tozalash</a>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Foydalanuvchi</th>
+                                    <th>Sana</th>
+                                    <th>Kitoblar</th>
+                                    <th>Jami summa</th>
+                                    <th>To'lov usuli</th>
+                                    <th>Holat</th>
+                                    <th>Amallar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var order in Model)
+                                {
+                                    <tr>
+                                        <td>@order.Id</td>
+                                        <td>
+                                            <strong>@order.Foydalanuvchi?.Familiya @order.Foydalanuvchi?.Ism</strong>
+                                            <br /><small class="text-muted">@order.Foydalanuvchi?.Email</small>
+                                        </td>
+                                        <td>@order.Sana.ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td>
+                                            @foreach (var item in order.OrderItems)
+                                            {
+                                                <div><small>@item.Kitob?.Nomi</small></div>
+                                            }
+                                        </td>
+                                        <td><strong>@order.JamiSumma.ToString("N0") so'm</strong></td>
+                                        <td>@order.TolovUsuli</td>
+                                        <td>
+                                            @if (order.Holati == "Kutilmoqda")
+                                            {
+                                                <span class="badge badge-warning">Kutilmoqda</span>
+                                            }
+                                            else if (order.Holati == "To'langan")
+                                            {
+                                                <span class="badge badge-success">To'langan</span>
+                                            }
+                                            else if (order.Holati == "Bekor qilingan")
+                                            {
+                                                <span class="badge badge-secondary">Bekor qilingan</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-info">@order.Holati</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-info">
+                                                <i class="mdi mdi-eye"></i> Ko'rish
+                                            </a>
+                                            @if (order.Holati == "Kutilmoqda")
+                                            {
+                                                <form asp-action="Confirm" asp-route-id="@order.Id" method="post" style="display:inline;">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-sm btn-success"
+                                                            onclick="return confirm('Buyurtmani tasdiqlaysizmi?')">
+                                                        <i class="mdi mdi-check"></i> Tasdiqlash
+                                                    </button>
+                                                </form>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                                @if (!Model.Any())
+                                {
+                                    <tr>
+                                        <td colspan="8" class="text-center text-muted py-4">Buyurtmalar topilmadi.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    @if (totalPages > 1)
+                    {
+                        <nav>
+                            <ul class="pagination pagination-sm">
+                                @for (int i = 1; i <= totalPages; i++)
+                                {
+                                    <li class="page-item @(i == currentPage ? "active" : "")">
+                                        <a class="page-link" asp-action="Index"
+                                           asp-route-page="@i"
+                                           asp-route-holat="@holatFilter"
+                                           asp-route-keywords="@kw">@i</a>
+                                    </li>
+                                }
+                            </ul>
+                        </nav>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

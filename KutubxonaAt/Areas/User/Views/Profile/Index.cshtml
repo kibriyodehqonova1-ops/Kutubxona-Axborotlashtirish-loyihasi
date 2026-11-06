@@ -1,0 +1,226 @@
+﻿@using KutubxonaAt.ViewModels.Account
+@model ProfileViewModel
+@{
+    ViewData["Title"] = "Mening profilim";
+}
+
+<!-- Page Banner -->
+<section class="page-banner services-banner">
+    <div class="container">
+        <div class="banner-header">
+            <h2>Mening profilim</h2>
+            <span class="underline center"></span>
+            <p class="lead">Shaxsiy maʼlumotlaringizni ko‘rish va tahrirlash</p>
+        </div>
+        <div class="breadcrumb">
+            <ul>
+                <li><a asp-area="User" asp-controller="Home" asp-action="Index">Bosh sahifa</a></li>
+                <li>Profil</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<div id="content" class="site-content">
+    <div id="primary" class="content-area">
+        <main id="main" class="site-main">
+            <div class="main-news-list">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Shaxsiy maʼlumotlar</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <form asp-action="Index" method="post">
+                                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                        <div class="form-group">
+                                            <label asp-for="Ism">Ism</label>
+                                            <input asp-for="Ism" class="form-control" />
+                                            <span asp-validation-for="Ism" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="Familiya">Familiya</label>
+                                            <input asp-for="Familiya" class="form-control" />
+                                            <span asp-validation-for="Familiya" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="Sharif">Otasining ismi</label>
+                                            <input asp-for="Sharif" class="form-control" />
+                                            <span asp-validation-for="Sharif" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="Email">Email</label>
+                                            <input asp-for="Email" class="form-control" disabled />
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="Telefon">Telefon</label>
+                                            <input asp-for="Telefon" class="form-control" />
+                                            <span asp-validation-for="Telefon" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="Manzil">Manzil</label>
+                                            <input asp-for="Manzil" class="form-control" />
+                                            <span asp-validation-for="Manzil" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="TugilganSana">Tug‘ilgan sana</label>
+                                            <input asp-for="TugilganSana" type="date" class="form-control" />
+                                            <span asp-validation-for="TugilganSana" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="Turi">Foydalanuvchi turi</label>
+                                            <input asp-for="Turi" class="form-control" disabled />
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="Fakultet">Fakultet</label>
+                                            <input asp-for="Fakultet" class="form-control" />
+                                            <span asp-validation-for="Fakultet" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="Guruh">Guruh</label>
+                                            <input asp-for="Guruh" class="form-control" />
+                                            <span asp-validation-for="Guruh" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="TalabaId">Talaba ID</label>
+                                            <input asp-for="TalabaId" class="form-control" />
+                                            <span asp-validation-for="TalabaId" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group mt-3">
+                                            <button type="submit" class="btn btn-primary">Saqlash</button>
+                                            <a asp-action="ChangePassword" class="btn btn-default">Parolni o‘zgartirish</a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Hisob maʼlumotlari</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <ul class="list-group">
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span>Ro‘yxatdan o‘tgan sana:</span>
+                                            <strong>@Model.RoyxatSanasi.ToString("dd.MM.yyyy")</strong>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span>Abonement amal qilish muddati:</span>
+                                            <strong>@(Model.AmalMuddati?.ToString("dd.MM.yyyy") ?? "Cheklanmagan")</strong>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span>Holat:</span>
+                                            @if (Model.Faol)
+                                            {
+                                                <span class="label label-success">Faol</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="label label-danger">Faol emas</span>
+                                            }
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- So‘nggi bronlar -->
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">So‘nggi bronlar</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Kitob nomi</th>
+                                                    <th>Bron sanasi</th>
+                                                    <th>Amal muddati</th>
+                                                    <th>Holat</th>
+                                            </thead>
+                                            <tbody>
+                                                @if (ViewBag.RecentReservations != null && ViewBag.RecentReservations.Count > 0)
+                                                {
+                                                    foreach (var res in ViewBag.RecentReservations)
+                                                    {
+                                                        <tr>
+                                                            <td>@res.Kitob?.Nomi</td>
+                                                            <td>@res.BronSana.ToString("dd.MM.yyyy")</td>
+                                                            <td>@res.AmalMuddati.ToString("dd.MM.yyyy")</td>
+                                                            <td>
+                                                                @if (res.Holati == "Faol")
+                                                                {
+                                                                    <span class="label label-warning">Faol</span>
+                                                                }
+                                                                else if (res.Holati == "Bajarilgan")
+                                                                {
+                                                                    <span class="label label-success">Bajarilgan</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="label label-default">@res.Holati</span>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <td colspan="4" class="text-center text-muted">Hozircha bron qilmagansiz.</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sotib olingan kitoblar -->
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Sotib olingan kitoblar</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Kitob nomi</th>
+                                                    <th>Sotib olingan sana</th>
+                                                    <th>Narx</th>
+                                            </thead>
+                                            <tbody>
+                                                @if (ViewBag.Purchases != null && ViewBag.Purchases.Count > 0)
+                                                {
+                                                    foreach (var purchase in ViewBag.Purchases)
+                                                    {
+                                                        <tr>
+                                                            <td>@purchase.Kitob?.Nomi</td>
+                                                            <td>@purchase.SotibOlinganSana.ToString("dd.MM.yyyy")</td>
+                                                            <td>@purchase.TolanganNarx.ToString("N0") so‘m</td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <td colspan="3" class="text-center text-muted">Hozircha hech qanday kitob sotib olmagansiz.</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>

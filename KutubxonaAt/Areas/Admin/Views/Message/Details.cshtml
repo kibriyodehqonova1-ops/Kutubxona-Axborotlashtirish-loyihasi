@@ -1,0 +1,39 @@
+﻿@model KutubxonaAt.Models.ContactMessage
+@{
+    ViewData["Title"] = "Xabar tafsilotlari";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="content-wrapper">
+    <div class="page-header">
+        <h3 class="page-title">Xabar #@Model.Id</h3>
+        <a asp-action="Index" class="btn btn-light">Ortga</a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <p><strong>Foydalanuvchi:</strong> @Model.Familiya @Model.Ism</p>
+                    <p><strong>Email:</strong> @Model.Email</p>
+                    <p><strong>Telefon:</strong> @(string.IsNullOrEmpty(Model.Telefon) ? "—" : Model.Telefon)</p>
+                    <p><strong>Yuborilgan sana:</strong> @Model.YuborilganSana.ToString("dd.MM.yyyy HH:mm")</p>
+                    <hr />
+                    <p><strong>Xabar:</strong></p>
+                    <p style="white-space: pre-line;">@Model.Xabar</p>
+                    <hr />
+                    <form asp-action="Reply" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <div class="form-group">
+                            <label>Javob (ixtiyoriy)</label>
+                            <textarea name="replyText" class="form-control" rows="5">@Model.AdminJavobi</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Javobni saqlash</button>
+                        <button type="submit" formaction="@Url.Action("Delete")" formmethod="post" class="btn btn-danger" onclick="return confirm('Xabarni o‘chirmoqchimisiz?')">O‘chirish</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,41 @@
+## .NET / Visual Studio
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.log
+*.tmp
+TestResults/
+publish/
+*.dbmdl
+
+## Rider / ReSharper
+.idea/
+_ReSharper*/
+*.DotSettings.user
+
+## Maxfiy ma'lumotlar (hech qachon commit qilinmasin)
+.env
+appsettings.Production.json
+appsettings.Local.json
+secrets.json
+
+## Foydalanuvchi yuklagan fayllar (papka strukturasi .gitkeep orqali saqlanadi)
+wwwroot/uploads/books/*
+wwwroot/uploads/media/*
+!wwwroot/uploads/books/.gitkeep
+!wwwroot/uploads/media/.gitkeep
+
+## AI/IDE lokal sozlamalari va yordamchi fayllar
+.claude/
+*_content.txt
+
+## OS
+.DS_Store
+Thumbs.db

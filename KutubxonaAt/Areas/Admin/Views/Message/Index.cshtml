@@ -1,0 +1,45 @@
+﻿@model IEnumerable<KutubxonaAt.Models.ContactMessage>
+@{
+    ViewData["Title"] = "Bog‘lanish xabarlari";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="content-wrapper">
+    <div class="page-header">
+        <h3 class="page-title">Bog‘lanish xabarlari</h3>
+        <div>
+            <a asp-action="Index" asp-route-unreadOnly="true" class="btn btn-warning">O‘qilmaganlar</a>
+            <a asp-action="Index" asp-route-unreadOnly="false" class="btn btn-secondary">Barchasi</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr><th>ID</th><th>Foydalanuvchi</th><th>Email</th><th>Xabar</th><th>Sana</th><th>Holat</th><th></th></tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var msg in Model)
+                                {
+                                    <tr class="@(msg.Oqilgan ? "" : "table-warning")">
+                                        <td>@msg.Id</td>
+                                        <td>@(msg.Familiya + " " + msg.Ism)</td>
+                                        <td>@msg.Email</td>
+                                        <td>@(msg.Xabar.Length > 60 ? msg.Xabar.Substring(0, 60) + "..." : msg.Xabar)</td>
+                                        <td>@msg.YuborilganSana.ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td>@(msg.Oqilgan ? "O‘qilgan" : "Yangi")</td>
+                                        <td><a asp-action="Details" asp-route-id="@msg.Id" class="btn btn-sm btn-primary">Batafsil</a></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

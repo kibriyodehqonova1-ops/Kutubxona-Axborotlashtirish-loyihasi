@@ -1,0 +1,75 @@
+@model KutubxonaAt.Models.YetkazibBerish
+@{
+    ViewData["Title"] = "Yetkazib berish kuzatuvi";
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="page-banner services-banner">
+    <div class="container">
+        <div class="banner-header">
+            <h2>Kuzatuv #@Model.KuzatuvRaqami</h2>
+        </div>
+    </div>
+</section>
+
+<div id="content" class="site-content">
+    <div class="container" style="padding:30px 15px;">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+
+                @* Progress bar *@
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="row text-center" style="margin-bottom:20px;">
+                            @{
+                                var step1 = "active";
+                                var step2 = Model.Holati is "Yo'lda" or "Yetkazildi" ? "active" : "";
+                                var step3 = Model.Holati == "Yetkazildi" ? "active" : "";
+                            }
+                            <div class="col-xs-4">
+                                <div style="width:50px;height:50px;border-radius:50%;background:@(step1=="active"?"#5cb85c":"#e9ecef");display:inline-flex;align-items:center;justify-content:center;color:white;font-size:20px;">
+                                    <i class="fa fa-cog"></i>
+                                </div>
+                                <p><strong>Tayyorlanmoqda</strong></p>
+                            </div>
+                            <div class="col-xs-4">
+                                <div style="width:50px;height:50px;border-radius:50%;background:@(step2=="active"?"#5bc0de":"#e9ecef");display:inline-flex;align-items:center;justify-content:center;color:white;font-size:20px;">
+                                    <i class="fa fa-truck"></i>
+                                </div>
+                                <p><strong>Yo'lda</strong></p>
+                            </div>
+                            <div class="col-xs-4">
+                                <div style="width:50px;height:50px;border-radius:50%;background:@(step3=="active"?"#5cb85c":"#e9ecef");display:inline-flex;align-items:center;justify-content:center;color:white;font-size:20px;">
+                                    <i class="fa fa-check"></i>
+                                </div>
+                                <p><strong>Yetkazildi</strong></p>
+                            </div>
+                        </div>
+
+                        <table class="table table-condensed">
+                            <tr><td><strong>Kuzatuv raqami</strong></td><td>#@Model.KuzatuvRaqami</td></tr>
+                            <tr><td><strong>Kitob</strong></td><td>@(Model.Beruv?.KitobNusxa?.Kitob?.Nomi ?? "—")</td></tr>
+                            <tr><td><strong>Manzil</strong></td><td>@Model.Manzil, @Model.Shahar</td></tr>
+                            <tr><td><strong>Telefon</strong></td><td>@Model.TelefонRaqam</td></tr>
+                            <tr><td><strong>Narx</strong></td><td>@(Model.YetkazishNarxi == 0 ? "Bepul" : Model.YetkazishNarxi.ToString("N0") + " so'm")</td></tr>
+                            <tr><td><strong>Buyurtma sanasi</strong></td><td>@Model.BuyurtmaSana.ToString("dd.MM.yyyy HH:mm")</td></tr>
+                            <tr><td><strong>Taxminiy yetkazish</strong></td><td>@(Model.YetkazilishKutilganSana?.ToString("dd.MM.yyyy") ?? "—")</td></tr>
+                            @if (!string.IsNullOrEmpty(Model.HaydovchiMaʼlumoti))
+                            {
+                                <tr><td><strong>Haydovchi</strong></td><td>@Model.HaydovchiMaʼlumoti</td></tr>
+                            }
+                            @if (Model.YetkazilganSana.HasValue)
+                            {
+                                <tr><td><strong>Yetkazildi</strong></td><td>@Model.YetkazilganSana.Value.ToString("dd.MM.yyyy HH:mm")</td></tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+
+                <a asp-action="Index" class="btn btn-default">
+                    <i class="fa fa-arrow-left"></i> Orqaga
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

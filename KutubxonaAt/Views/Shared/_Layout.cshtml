@@ -1,0 +1,390 @@
+﻿<!DOCTYPE html>
+<html lang="uz">
+
+
+<head>
+
+    <!-- Meta -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1">
+
+    <!-- Title -->
+    <title>..:: Kutubxona avtomatlashtirilgan tizimi ::..</title>
+
+    <!-- Favicon -->
+    <link href="~/images/favicon.ico" rel="icon" type="image/x-icon" />
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i%7CLato:100,100i,300,300i,400,400i,700,700i,900,900i" rel="stylesheet" />
+    <link href="~/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Mobile Menu -->
+    <link href="~/css/mmenu.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/mmenu.positioning.css" rel="stylesheet" type="text/css" />
+
+    <!-- Stylesheet -->
+    <link href="~/style.css" rel="stylesheet" type="text/css" />
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="~/js/html5shiv.min.js"></script>
+    <script src="~/js/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        /* Kategoriya filtri ro'yxatidagi rasmlarni bir xil o'lchamga keltirish */
+#category-filter .category-list li figure {
+    width: 100%;
+    height: 320px;          /* Istalgan balandlik */
+    overflow: hidden;
+    position: relative;
+}
+
+#category-filter .category-list li figure img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;      /* Rasmni butunlay qoplaydi, nisbatni saqlaydi */
+    object-position: center; /* Markazga joylashtiradi */
+    transition: transform 0.3s ease;
+}
+
+/* Ixtiyoriy: hover effekti */
+#category-filter .category-list li figure:hover img {
+    transform: scale(1.05);
+}
+
+       
+            /* Rasmlarni bir xil o‘lchamda va chiroyli ko‘rsatish */
+            .booksmedia-fullwidth ul li figure {
+                width: 100%;
+                height: 280px;
+                overflow: hidden;
+                position: relative;
+            }
+
+            .book-thumbnail {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center;
+                transition: transform 0.3s ease;
+            }
+
+            .booksmedia-fullwidth ul li figure:hover .book-thumbnail {
+                transform: scale(1.05);
+            }
+            /* Qo‘shimcha: agar rasm yuklanmasa, fon rangi */
+            .book-thumbnail {
+                background-color: #f5f5f5;
+            }
+     
+    </style>
+</head>
+
+<body>
+
+    <!-- Start: Header Section -->
+    <header id="header-v1" class="navbar-wrapper">
+        <div class="container">
+            <div class="row">
+                <nav class="navbar navbar-default">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="navbar-header">
+                                <div class="navbar-brand">
+                                    <h1>
+                                        <a asp-action="Index" asp-controller="Home">
+                                            <img src="~/images/libraria-logo-v1.png" alt="Kutubxona" />
+                                        </a>
+                                    </h1>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <!-- Header Topbar -->
+                            <div class="header-topbar hidden-sm hidden-xs">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="topbar-info">
+                                            <a href="tel:+99871-200-00-00"><i class="fa fa-phone"></i>+99871 200-00-00</a>
+                                            <span>/</span>
+                                            <a href="mailto:info@kutubxona.uz"><i class="fa fa-envelope"></i>info@kutubxona.uz</a>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="topbar-links">
+                                            <a asp-action="Login" asp-controller="Account"><i class="fa fa-lock"></i>Kirish / Ro‘yxatdan o‘tish</a>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="navbar-collapse hidden-sm hidden-xs">
+                                <ul class="nav navbar-nav">
+                                    <li class="dropdown active">
+                                        <a data-toggle="dropdown" class="dropdown-toggle disabled" asp-action="Index" asp-controller="Home">Bosh sahifa</a>
+                                        <ul class="dropdown-menu">
+                                            <li><a asp-action="Index" asp-controller="Home">Bosh sahifa V1</a></li>
+                                          @*   <li><a asp-action="HomeV2" asp-controller="Home">Bosh sahifa V2</a></li>
+                                            <li><a asp-action="HomeV3" asp-controller="Home">Bosh sahifa V3</a></li> *@
+                                        </ul>
+                                    </li>
+                                    <li class="dropdown">
+                                        <a data-toggle="dropdown" class="dropdown-toggle disabled" asp-action="Book_media" asp-controller="Home">Kitoblar va media</a>
+                                       @*  <ul class="dropdown-menu">
+                                            <li><a asp-action="Book_media" asp-controller="Home">Ro‘yxat ko‘rinishi</a></li>
+                                            <li><a asp-action="Book_media_grid_v1" asp-controller="Home">Blok ko‘rinishi V1</a></li>
+                                            <li><a asp-action="Book_media_grid_v2" asp-controller="Home">Blok ko‘rinishi V2</a></li>
+                                            <li><a asp-action="Book_media_detail" asp-controller="Home">Kitob haqida V1</a></li>
+                                            <li><a asp-action="Book_media_detail_v2" asp-controller="Home">Kitob haqida V2</a></li>
+                                        </ul> *@
+                                    </li>
+                                    <li class="dropdown">
+                                        <a data-toggle="dropdown" class="dropdown-toggle disabled" asp-action="News" asp-controller="Home">Yangiliklar va tadbirlar</a>
+                                       @*  <ul class="dropdown-menu">
+                                            <li><a asp-action="News" asp-controller="Home">Ro‘yxat ko‘rinishi</a></li>
+                                            <li><a asp-action="News_detail" asp-controller="Home">Batafsil</a></li>
+                                        </ul> *@
+                                    </li>
+                                   @*  <li class="dropdown">
+                                        <a data-toggle="dropdown" class="dropdown-toggle disabled" href="#">Sahifalar</a>
+                                        <ul class="dropdown-menu">
+                                            <li><a asp-action="Cart" asp-controller="Home">Savat</a></li>
+                                            <li><a asp-action="Checkout" asp-controller="Home">Buyurtma</a></li>
+                                            <li><a asp-action="Signin" asp-controller="Home">Kirish / Ro‘yxatdan o‘tish</a></li>
+                                            <li><a asp-action="Error404" asp-controller="Home">404 / Xato</a></li>
+                                        </ul>
+                                    </li> *@
+                                    @* <li class="dropdown">
+                                        <a data-toggle="dropdown" class="dropdown-toggle disabled" href="#">Blog</a>
+                                        <ul class="dropdown-menu">
+                                            <li><a asp-action="Blog" asp-controller="Home">Blok ko‘rinishi</a></li>
+                                            <li><a asp-action="Blog_detail" asp-controller="Home">Maqola</a></li>
+                                        </ul>
+                                    </li> *@
+                                    <li><a asp-action="Services" asp-controller="Home">Xizmatlar</a></li>
+                                    <li><a asp-action="Contact" asp-controller="Home">Bog‘lanish</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mobile-menu hidden-lg hidden-md">
+                        <a href="#mobile-menu"><i class="fa fa-navicon"></i></a>
+                        <div id="mobile-menu">
+                            <ul>
+                                <li class="mobile-title">
+                                    <h4>Menyu</h4>
+                                    <a href="#" class="close"></a>
+                                </li>
+                                <li>
+                                    <a asp-action="Index" asp-controller="Home">Bosh sahifa</a>
+                                   @*  <ul>
+                                        <li><a asp-action="Index" asp-controller="Home">Bosh sahifa V1</a></li>
+                                        <li><a asp-action="HomeV2" asp-controller="Home">Bosh sahifa V2</a></li>
+                                        <li><a asp-action="HomeV3" asp-controller="Home">Bosh sahifa V3</a></li>
+                                    </ul> *@
+                                </li>
+                                <li>
+                                    <a asp-action="Book_media" asp-controller="Home">Kitoblar va media</a>
+                                   @*  <ul>
+                                        <li><a asp-action="Book_media" asp-controller="Home">Ro‘yxat ko‘rinishi</a></li>
+                                        <li><a asp-action="Book_media_grid_v1" asp-controller="Home">Blok ko‘rinishi V1</a></li>
+                                        <li><a asp-action="Book_media_grid_v2" asp-controller="Home">Blok ko‘rinishi V2</a></li>
+                                        <li><a asp-action="Book_media_detail" asp-controller="Home">Kitob haqida V1</a></li>
+                                        <li><a asp-action="Book_media_detail_v2" asp-controller="Home">Kitob haqida V2</a></li>
+                                    </ul> *@
+                                </li>
+                                <li>
+                                    <a asp-action="News" asp-controller="Home">Yangiliklar va tadbirlar</a>
+                                   @*  <ul>
+                                        <li><a asp-action="News" asp-controller="Home">Ro‘yxat ko‘rinishi</a></li>
+                                        <li><a asp-action="News_detail" asp-controller="Home">Batafsil</a></li>
+                                    </ul> *@
+                                </li>
+                               @*  <li>
+                                    <a href="#">Sahifalar</a>
+                                    <ul>
+                                        <li><a asp-action="Cart" asp-controller="Home">Savat</a></li>
+                                        <li><a asp-action="Checkout" asp-controller="Home">Buyurtma</a></li>
+                                        <li><a asp-action="Signin" asp-controller="Home">Kirish / Ro‘yxatdan o‘tish</a></li>
+                                        <li><a asp-action="Error404" asp-controller="Home">404 / Xato</a></li>
+                                    </ul>
+                                </li> *@
+                                @* <li>
+                                    <a href="#">Blog</a>
+                                    <ul>
+                                        <li><a asp-action="Blog" asp-controller="Home">Blok ko‘rinishi</a></li>
+                                        <li><a asp-action="Blog_detail" asp-controller="Home">Maqola</a></li>
+                                    </ul>
+                                </li> *@
+                                <li><a asp-action="Services" asp-controller="Home">Xizmatlar</a></li>
+                                <li><a asp-action="Contact" asp-controller="Home">Bog‘lanish</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <!-- End: Header Section -->
+    @RenderBody()
+
+    <!-- Start: Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div id="footer-widgets">
+                <div class="row">
+                    <div class="col-md-4 col-sm-6 widget-container">
+                        <div id="text-2" class="widget widget_text">
+                            <h3 class="footer-widget-title">Kutubxona haqida</h3>
+                            <span class="underline left"></span>
+                            <div class="textwidget">
+                                Kutubxonamiz kitobxonlarga keng qamrovli xizmatlar taqdim etadi. Bu yerda siz o‘zbek va jahon adabiyotining eng sara namunalarini topishingiz mumkin.
+                            </div>
+                            <address>
+                                <div class="info">
+                                    <i class="fa fa-location-arrow"></i>
+                                    <span>Toshkent sh., Mustaqillik ko‘chasi, 1-uy</span>
+                                </div>
+                                <div class="info">
+                                    <i class="fa fa-envelope"></i>
+                                    <span><a href="mailto:info@kutubxona.uz">info@kutubxona.uz</a></span>
+                                </div>
+                                <div class="info">
+                                    <i class="fa fa-phone"></i>
+                                    <span><a href="tel:+998712000000">+99871 200-00-00</a></span>
+                                </div>
+                            </address>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-6 widget-container">
+                        <div id="nav_menu-2" class="widget widget_nav_menu">
+                            <h3 class="footer-widget-title">Tezkor havolalar</h3>
+                            <span class="underline left"></span>
+                            <div class="menu-quick-links-container">
+                                <ul id="menu-quick-links" class="menu">
+                                    <li><a asp-action="News" asp-controller="Home">Kutubxona yangiliklari</a></li>
+                                    <li><a asp-action="History" asp-controller="Home">Tarix</a></li>
+                                    <li><a asp-action="Staff" asp-controller="Home">Xodimlar</a></li>
+                                    <li><a asp-action="Board" asp-controller="Home">Vasiylik kengashi</a></li>
+                                    <li><a asp-action="Budget" asp-controller="Home">Byudjet</a></li>
+                                    <li><a asp-action="AnnualReport" asp-controller="Home">Yillik hisobot</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix hidden-lg hidden-md hidden-xs tablet-margin-bottom"></div>
+                    <div class="col-md-2 col-sm-6 widget-container">
+                        <div id="text-4" class="widget widget_text">
+                            <h3 class="footer-widget-title">Ish vaqti</h3>
+                            <span class="underline left"></span>
+                            <div class="timming-text-widget">
+                                <time datetime="2017-02-13">Dushanba - Payshanba: 9:00 - 21:00</time>
+                                <time datetime="2017-02-13">Juma: 9:00 - 18:00</time>
+                                <time datetime="2017-02-13">Shanba: 9:00 - 17:00</time>
+                                <time datetime="2017-02-13">Yakshanba: 13:00 - 18:00</time>
+                                <ul>
+                                    <li><a asp-action="Closings" asp-controller="Home">Yopilish kunlari</a></li>
+                                    <li><a asp-action="Branches" asp-controller="Home">Filiallar</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6 widget-container">
+                        <div class="widget twitter-widget">
+                            <h3 class="footer-widget-title">So‘nggi xabarlar</h3>
+                            <span class="underline left"></span>
+                            <div id="twitter-feed">
+                                @* <ul>
+                                    <li>
+                                        <p><a href="#">@KutubxonaUz</a> Yangi kitoblar kelib tushdi: "Stiven King - It" va boshqalar. <a href="#">kutubxona.uz/new</a></p>
+                                    </li>
+                                    <li>
+                                        <p><a href="#">@KutubxonaUz</a> Ertaga soat 15:00 da "O‘zbek adabiyoti" kechasi bo‘lib o‘tadi. Barchani kutib qolamiz! <a href="#">kutubxona.uz/events</a></p>
+                                    </li>
+                                </ul> *@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sub-footer">
+            <div class="container">
+                <div class="row">
+                    <div class="footer-text col-md-3">
+                        <p>© 2025 Kutubxona AT. Barcha huquqlar himoyalangan.</p>
+                    </div>
+                    <div class="col-md-9 pull-right">
+                        <ul>
+                            <li><a asp-action="Index" asp-controller="Home">Bosh sahifa</a></li>
+                            <li><a asp-action="Book_media" asp-controller="Home">Kitoblar</a></li>
+                            <li><a asp-action="News" asp-controller="Home">Yangiliklar</a></li>
+                           
+                            <li><a asp-action="Services" asp-controller="Home">Xizmatlar</a></li>
+                           
+                         
+                            <li><a asp-action="Contact" asp-controller="Home">Bog‘lanish</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- End: Footer -->
+    <!-- jQuery Latest Version 1.x -->
+    <script type="text/javascript" src="~/js/jquery-1.12.4.min.js"></script>
+
+    <!-- jQuery UI -->
+    <script type="text/javascript" src="~/js/jquery-ui.min.js"></script>
+
+    <!-- jQuery Easing -->
+    <script type="text/javascript" src="~/js/jquery.easing.1.3.js"></script>
+
+    <!-- Bootstrap -->
+    <script type="text/javascript" src="~/js/bootstrap.min.js"></script>
+
+    <!-- Mobile Menu -->
+    <script type="text/javascript" src="~/js/mmenu.min.js"></script>
+
+    <!-- Harvey - State manager for media queries -->
+    <script type="text/javascript" src="~/js/harvey.min.js"></script>
+
+    <!-- Waypoints - Load Elements on View -->
+    <script type="text/javascript" src="~/js/waypoints.min.js"></script>
+
+    <!-- Facts Counter -->
+    <script type="text/javascript" src="~/js/facts.counter.min.js"></script>
+
+    <!-- MixItUp - Category Filter -->
+    <script type="text/javascript" src="~/js/mixitup.min.js"></script>
+
+    <!-- Owl Carousel -->
+    <script type="text/javascript" src="~/js/owl.carousel.min.js"></script>
+
+    <!-- Accordion -->
+    <script type="text/javascript" src="~/js/accordion.min.js"></script>
+
+    <!-- Responsive Tabs -->
+    <script type="text/javascript" src="~/js/responsive.tabs.min.js"></script>
+
+    <!-- Responsive Table -->
+    <script type="text/javascript" src="~/js/responsive.table.min.js"></script>
+
+    <!-- Masonry -->
+    <script type="text/javascript" src="~/js/masonry.min.js"></script>
+
+    <!-- Carousel Swipe -->
+    <script type="text/javascript" src="~/js/carousel.swipe.min.js"></script>
+
+    <!-- bxSlider -->
+    <script type="text/javascript" src="~/js/bxslider.min.js"></script>
+
+    <!-- Custom Scripts -->
+    <script type="text/javascript" src="~/js/main.js"></script>
+
+    <!-- Scripts seksiyasi (viewlardan qo‘shimcha skriptlar uchun) -->
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

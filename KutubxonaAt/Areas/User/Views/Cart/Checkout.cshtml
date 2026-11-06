@@ -1,0 +1,69 @@
+﻿@model List<KutubxonaAt.Models.CartItem>
+@{
+    ViewData["Title"] = "Buyurtma rasmiylashtirish";
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+    decimal total = ViewBag.Total;
+}
+
+<section class="page-banner services-banner">
+    <div class="container">
+        <div class="banner-header">
+            <h2>Buyurtma rasmiylashtirish</h2>
+            <span class="underline center"></span>
+            <p class="lead">Manzil va to‘lov usulini tanlang</p>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-7">
+            <form method="post" asp-action="PlaceOrder">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label>Manzil</label>
+                    <input type="text" name="manzil" class="form-control" required placeholder="To‘liq manzil (viloyat, tuman, ko‘cha, uy)" />
+                </div>
+                <div class="form-group">
+                    <label>To‘lov usuli</label>
+                    <select name="tolovUsuli" class="form-control" required>
+                        <option value="">Tanlang</option>
+                        <option value="Naqd">Naqd (kutubxonada)</option>
+                        <option value="Plastik karta">Plastik karta (terminal)</option>
+                        <option value="Click">Click</option>
+                        <option value="Payme">Payme</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Izoh (ixtiyoriy)</label>
+                    <textarea name="izoh" class="form-control" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Buyurtma berish</button>
+                <a asp-action="Index" class="btn btn-default">Ortga</a>
+            </form>
+        </div>
+        <div class="col-md-5">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Buyurtma xulosasi</h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table">
+                        <thead>
+                            <tr><th>Kitob</th><th>Narxi</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr><td>@item.Nomi</td><td>@item.Narxi.ToString("N0") so‘m</td></tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr><th>Jami:</th><th>@total.ToString("N0") so‘m</th></tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

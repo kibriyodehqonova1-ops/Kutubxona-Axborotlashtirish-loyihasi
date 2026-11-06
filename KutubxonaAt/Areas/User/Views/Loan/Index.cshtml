@@ -1,0 +1,180 @@
+@model IEnumerable<KutubxonaAt.Areas.User.Controllers.LoanViewModel>
+@{
+    ViewData["Title"] = "Mening kitoblarim";
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="page-banner services-banner">
+    <div class="container">
+        <div class="banner-header">
+            <h2>Mening kitoblarim</h2>
+            <span class="underline center"></span>
+            <p class="lead">Ijara olgan kitoblaringiz va ularni boshqarish</p>
+        </div>
+        <div class="breadcrumb">
+            <ul>
+                <li><a asp-area="User" asp-controller="Home" asp-action="Index">Bosh sahifa</a></li>
+                <li>Mening kitoblarim</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<div id="content" class="site-content">
+    <div class="container" style="padding: 30px 15px;">
+
+        @if (TempData["Xabar"] != null)
+        {
+            <div class="alert alert-@(TempData["XabarTuri"] ?? "info") alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+                @TempData["Xabar"]
+            </div>
+        }
+        @if (TempData["Ogoh"] != null)
+        {
+            <div class="alert alert-warning alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+                @TempData["Ogoh"]
+            </div>
+        }
+        @* Eski xabar kalitlari bilan ham ishlash *@
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+        @if (TempData["Warning"] != null)
+        {
+            <div class="alert alert-warning">@TempData["Warning"]</div>
+        }
+
+        @if (!Model.Any())
+        {
+            <div class="text-center" style="padding: 60px 0;">
+                <i class="fa fa-book fa-4x text-muted"></i>
+                <h3 class="text-muted" style="margin-top: 20px;">Hozirda faol kitoblaringiz yo'q</h3>
+                <a asp-area="User" asp-controller="Book" asp-action="Index" class="btn btn-primary">
+                    <i class="fa fa-search"></i> Kitoblarni ko'rish
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                @foreach (var loan in Model)
+                {
+                    var cardClass = loan.MuddatiOtganmi ? "border-danger" : loan.QolganKunlar <= 3 ? "border-warning" : "";
+                    <div class="col-md-6" style="margin-bottom: 20px;">
+                        <div class="panel panel-default" style="@(loan.MuddatiOtganmi ? "border-left: 4px solid #d9534f;" : loan.QolganKunlar <= 3 ? "border-left: 4px solid #f0ad4e;" : "border-left: 4px solid #5cb85c;")">
+                            <div class="panel-body">
+                                <div style="display: flex; gap: 15px; align-items: flex-start;">
+                                    @if (!string.IsNullOrEmpty(loan.KitobRasm))
+                                    {
+                                        <img src="@loan.KitobRasm" style="width:55px;height:75px;object-fit:cover;border-radius:4px;flex-shrink:0;" />
+                                    }
+                                    else
+                                    {
+                                        <div style="width:55px;height:75px;background:#e9ecef;display:flex;align-items:center;justify-content:center;border-radius:4px;flex-shrink:0;">
+                                            <i class="fa fa-book fa-2x text-muted"></i>
+                                        </div>
+                                    }
+                                    <div style="flex: 1;">
+                                        <h4 style="margin: 0 0 5px;">@loan.KitobNomi</h4>
+                                        <small class="text-muted">Inventar: @loan.InventarRaqami</small>
+                                        <div style="margin: 8px 0;">
+                                            <span class="label label-@(loan.Holati == "Berilgan" ? "success" : loan.Holati == "Uzaytirilgan" ? "info" : "danger")">
+                                                @loan.Holati
+                                            </span>
+                                        </div>
+                                        <table style="font-size: 13px; color: #555;">
+                                            <tr>
+                                                <td style="padding-right:15px;"><i class="fa fa-calendar-plus-o"></i> Berilgan:</td>
+                                                <td>@loan.BerilganSana.ToString("dd.MM.yyyy")</td>
+                                            </tr>
+                                            <tr>
+                                                <td><i class="fa fa-calendar-times-o"></i> Qaytarish:</td>
+                                                <td style="@(loan.MuddatiOtganmi ? "color:#d9534f;font-weight:bold;" : "")">
+                                                    @loan.QaytarishMuddati.ToString("dd.MM.yyyy")
+                                                    @if (loan.MuddatiOtganmi)
+                                                    {
+                                                        <span class="label label-danger">Muddati o'tdi!</span>
+                                                    }
+                                                    else if (loan.QolganKunlar <= 3)
+                                                    {
+                                                        <span class="label label-warning">@loan.QolganKunlar kun qoldi</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="label label-success">@loan.QolganKunlar kun qoldi</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                            @if (loan.FineAmount > 0)
+                                            {
+                                                <tr>
+                                                    <td><i class="fa fa-exclamation-triangle text-danger"></i> Jarima:</td>
+                                                    <td style="color:#d9534f;font-weight:bold;">
+                                                        @loan.FineAmount.ToString("N0") so'm
+                                                    </td>
+                                                </tr>
+                                            }
+                                            <tr>
+                                                <td>Uzaytirish:</td>
+                                                <td>@loan.UzaytirishlarSoni / @loan.MaksUzaytirish</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+                                    <form asp-action="Return" method="post" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@loan.Id" />
+                                        <button type="submit" class="btn btn-sm btn-primary"
+                                            onclick="return confirm('Kitobni qaytarmoqchimisiz?')">
+                                            <i class="fa fa-check"></i> Qaytarish
+                                        </button>
+                                    </form>
+
+                                    @if (loan.UzaytirishMumkinmi)
+                                    {
+                                        <form asp-action="Renew" method="post" style="display:inline;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@loan.Id" />
+                                            <button type="submit" class="btn btn-sm btn-warning"
+                                                onclick="return confirm('Muddatni 15 kunga uzaytirasizmi?')">
+                                                <i class="fa fa-clock-o"></i> Uzaytirish
+                                            </button>
+                                        </form>
+                                    }
+                                    else if (!loan.UzaytirishMumkinmi && !loan.MuddatiOtganmi)
+                                    {
+                                        <button class="btn btn-sm btn-default" disabled title="Uzaytirish imkoniyati tugagan (@loan.MaksUzaytirish marta)">
+                                            <i class="fa fa-times"></i> Uzaytirib bo'lmaydi
+                                        </button>
+                                    }
+
+                                    <a asp-area="User" asp-controller="YetkazibBerish" asp-action="Buyurtma"
+                                       asp-route-beruvId="@loan.Id"
+                                       class="btn btn-sm btn-info">
+                                        <i class="fa fa-truck"></i> Yetkazish
+                                    </a>
+
+                                    @if (loan.MuddatiOtganmi)
+                                    {
+                                        <a asp-area="User" asp-controller="Fine" asp-action="Index"
+                                           class="btn btn-sm btn-danger">
+                                            <i class="fa fa-money"></i> Jarimani to'lash
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

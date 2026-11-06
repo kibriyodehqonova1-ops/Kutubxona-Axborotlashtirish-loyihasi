@@ -1,0 +1,184 @@
+@{
+    ViewData["Title"] = "Abonement";
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+    var faolAbonement = ViewBag.FaolAbonement as KutubxonaAt.Models.Abonement;
+    var turlar = ViewBag.Turlar as List<KutubxonaAt.Models.AbonementTuri> ?? new();
+    var tarix = ViewBag.Tarix as List<KutubxonaAt.Models.Abonement> ?? new();
+}
+
+<section class="page-banner services-banner">
+    <div class="container">
+        <div class="banner-header">
+            <h2>Abonement</h2>
+            <span class="underline center"></span>
+            <p class="lead">Qulay abonement bilan kutubxona xizmatlaridan foydalaning</p>
+        </div>
+        <div class="breadcrumb">
+            <ul>
+                <li><a asp-area="User" asp-controller="Home" asp-action="Index">Bosh sahifa</a></li>
+                <li>Abonement</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<div id="content" class="site-content">
+    <div class="container" style="padding: 30px 15px;">
+
+        @if (TempData["Xabar"] != null)
+        {
+            <div class="alert alert-@(TempData["XabarTuri"] ?? "info") alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+                @TempData["Xabar"]
+            </div>
+        }
+
+        @* === FAOL ABONEMENT === *@
+        @if (faolAbonement != null && faolAbonement.TugashSana > DateTime.Now)
+        {
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-check-circle"></i> Faol abonement</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h4>@faolAbonement.AbonementTuri?.Nomi</h4>
+                            <p>@faolAbonement.AbonementTuri?.Tavsif</p>
+                            <table class="table table-condensed" style="max-width:400px;">
+                                <tr>
+                                    <td><strong>Boshlanish:</strong></td>
+                                    <td>@faolAbonement.BoshlanishSana.ToString("dd.MM.yyyy")</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tugash:</strong></td>
+                                    <td>
+                                        @faolAbonement.TugashSana.ToString("dd.MM.yyyy")
+                                        <span class="label label-@(faolAbonement.QolganKunlar <= 3 ? "danger" : "success")">
+                                            @faolAbonement.QolganKunlar kun qoldi
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Bepul kitoblar:</strong></td>
+                                    <td>
+                                        @faolAbonement.IshlatilganBepulKitoblar /
+                                        @faolAbonement.AbonementTuri?.BepulKitoblarSoni ta
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>To'lov:</strong></td>
+                                    <td>@faolAbonement.TolanganNarx.ToString("N0") so'm (@faolAbonement.TolovUsuli)</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div style="background:#dff0d8;border-radius:50%;width:100px;height:100px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:15px;">
+                                <i class="fa fa-star fa-3x text-success"></i>
+                            </div>
+                            <br />
+                            <form asp-action="Bekor" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@faolAbonement.Id" />
+                                <button type="submit" class="btn btn-sm btn-default"
+                                    onclick="return confirm('Abonementni bekor qilmoqchimisiz?')">
+                                    Bekor qilish
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">
+                <i class="fa fa-info-circle"></i>
+                Sizda hozirda faol abonement yo'q. Quyida mos abonement turini tanlang.
+            </div>
+
+            @* === ABONEMENT TURLARI === *@
+            <h3>Abonement turlarini tanlang</h3>
+            <div class="row" style="margin-top:20px;">
+                @foreach (var tur in turlar)
+                {
+                    var rangi = tur.DavomiylikKun <= 30 ? "default" : tur.DavomiylikKun <= 90 ? "info" : "warning";
+                    <div class="col-md-4" style="margin-bottom:20px;">
+                        <div class="panel panel-@rangi" style="border-radius:8px;overflow:hidden;">
+                            <div class="panel-heading text-center" style="padding:20px;">
+                                <h3 style="margin:0;">@tur.Nomi</h3>
+                                <p style="margin:5px 0 0;">@(tur.DavomiylikKun == 30 ? "1 oy" : tur.DavomiylikKun == 90 ? "3 oy" : tur.DavomiylikKun == 365 ? "1 yil" : tur.DavomiylikKun + " kun")</p>
+                            </div>
+                            <div class="panel-body text-center">
+                                <h2 style="color:#333;font-weight:bold;">@tur.Narxi.ToString("N0") <small>so'm</small></h2>
+                                <hr style="margin:10px 0;" />
+                                <ul class="list-unstyled" style="text-align:left;margin:0 15px;">
+                                    <li><i class="fa fa-check text-success"></i> @tur.BepulKitoblarSoni ta bepul kitob/oy</li>
+                                    @if (tur.ChegirimFoizi > 0)
+                                    {
+                                        <li><i class="fa fa-check text-success"></i> @tur.ChegirimFoizi% chegirma</li>
+                                    }
+                                    <li><i class="fa fa-check text-success"></i> Bir vaqtda @tur.MaksimalKitoblar ta kitob</li>
+                                    @if (tur.BepulYetkazish)
+                                    {
+                                        <li><i class="fa fa-check text-success"></i> Bepul yetkazib berish</li>
+                                    }
+                                </ul>
+                                @if (!string.IsNullOrEmpty(tur.Tavsif))
+                                {
+                                    <p class="text-muted" style="margin-top:10px;font-size:12px;">@tur.Tavsif</p>
+                                }
+                                <form asp-action="Sotib" method="post" style="margin-top:15px;">
+                                    <input type="hidden" name="turId" value="@tur.Id" />
+                                    <select name="tolovUsuli" class="form-control" style="margin-bottom:10px;">
+                                        <option value="Naqd">Naqd pul</option>
+                                        <option value="Click">Click</option>
+                                        <option value="Payme">Payme</option>
+                                        <option value="Bank">Bank kartasi</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-primary btn-block">
+                                        Sotib olish
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        @* === TARIX === *@
+        @if (tarix.Any())
+        {
+            <h4 style="margin-top:30px;">Abonement tarixi</h4>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Tur</th>
+                            <th>Boshlanish</th>
+                            <th>Tugash</th>
+                            <th>To'lov</th>
+                            <th>Holat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ab in tarix)
+                        {
+                            <tr>
+                                <td>@ab.AbonementTuri?.Nomi</td>
+                                <td>@ab.BoshlanishSana.ToString("dd.MM.yyyy")</td>
+                                <td>@ab.TugashSana.ToString("dd.MM.yyyy")</td>
+                                <td>@ab.TolanganNarx.ToString("N0") so'm</td>
+                                <td>
+                                    <span class="label label-@(ab.Holati == "Faol" ? "success" : ab.Holati == "Tugagan" ? "default" : "danger")">
+                                        @ab.Holati
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,331 @@
+@using static KutubxonaAt.Models.Kitob
+@model KutubxonaAt.Models.Order
+@{
+    ViewData["Title"] = "Buyurtma #" + Model.Id;
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+    bool isPending   = Model.Holati == "Kutilmoqda";
+    bool isPaid      = Model.Holati == "To'langan";
+    bool isCancelled = Model.Holati == "Bekor qilingan";
+
+    // Bu buyurtmada digital material bormi?
+    bool hasDigital = Model.OrderItems.Any(oi =>
+        oi.Kitob?.MediaTuri == MediaType.ElektronKitob ||
+        oi.Kitob?.MediaTuri == MediaType.AudioKitob    ||
+        oi.Kitob?.MediaTuri == MediaType.Video);
+}
+
+<section class="page-banner services-banner">
+    <div class="container">
+        <div class="banner-header">
+            <h2>Buyurtma #@Model.Id</h2>
+            <span class="underline center"></span>
+            <p class="lead">Buyurtma tafsilotlari va to'lov</p>
+        </div>
+        <div class="breadcrumb">
+            <ul>
+                <li><a asp-area="User" asp-controller="Home" asp-action="Index">Bosh sahifa</a></li>
+                <li><a asp-action="Index">Buyurtmalarim</a></li>
+                <li>Buyurtma #@Model.Id</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<div id="content" class="site-content">
+    <div id="primary" class="content-area">
+        <main id="main" class="site-main">
+            <div class="container" style="padding: 40px 0;">
+
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success"><i class="fa fa-check-circle"></i> @TempData["Success"]</div>
+                }
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> @TempData["Error"]</div>
+                }
+
+                <!-- Holat banner -->
+                @if (isPending)
+                {
+                    <div class="alert alert-warning" style="display:flex;align-items:center;gap:12px;">
+                        <i class="fa fa-clock-o fa-2x"></i>
+                        <div>
+                            <strong>To'lov kutilmoqda</strong><br />
+                            Buyurtmangiz to'lovni kutmoqda. Quyida qulay to'lov usulini tanlang.
+                        </div>
+                    </div>
+                }
+                else if (isPaid)
+                {
+                    <div class="alert alert-success" style="display:flex;align-items:center;gap:12px;">
+                        <i class="fa fa-check-circle fa-2x"></i>
+                        <div>
+                            <strong>To'lov qabul qilindi!</strong><br />
+                            Buyurtmangiz muvaffaqiyatli to'landi. Rahmat!
+                        </div>
+                    </div>
+                }
+                else if (isCancelled)
+                {
+                    <div class="alert alert-secondary" style="display:flex;align-items:center;gap:12px;">
+                        <i class="fa fa-ban fa-2x"></i>
+                        <div>
+                            <strong>Buyurtma bekor qilindi</strong><br />
+                            Bu buyurtma bekor qilingan.
+                        </div>
+                    </div>
+                }
+
+                <div class="row">
+                    <!-- Buyurtma ma'lumotlari -->
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><h3 class="panel-title"><i class="fa fa-info-circle"></i> Buyurtma ma'lumotlari</h3></div>
+                            <div class="panel-body">
+                                <table class="table table-condensed">
+                                    <tr><td><strong>Buyurtma raqami:</strong></td><td>#@Model.Id</td></tr>
+                                    <tr><td><strong>Sana:</strong></td><td>@Model.Sana.ToString("dd.MM.yyyy HH:mm")</td></tr>
+                                    <tr><td><strong>To'lov usuli:</strong></td><td>@Model.TolovUsuli</td></tr>
+                                    <tr><td><strong>Yetkazish manzili:</strong></td><td>@(Model.Manzil ?? "Ko'rsatilmagan")</td></tr>
+                                    <tr>
+                                        <td><strong>Holat:</strong></td>
+                                        <td>
+                                            @if (isPending)   { <span class="label label-warning">Kutilmoqda</span> }
+                                            else if (isPaid)  { <span class="label label-success">To'langan ✓</span> }
+                                            else              { <span class="label label-default">Bekor qilingan</span> }
+                                        </td>
+                                    </tr>
+                                    @if (!string.IsNullOrEmpty(Model.Izoh))
+                                    {
+                                        <tr><td><strong>Izoh:</strong></td><td>@Model.Izoh</td></tr>
+                                    }
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- To'lov bloki -->
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><h3 class="panel-title"><i class="fa fa-money"></i> To'lov</h3></div>
+                            <div class="panel-body" style="text-align:center;">
+                                <p style="font-size:24px; font-weight:700; color:#2c6fad; margin:10px 0 20px;">
+                                    @Model.JamiSumma.ToString("N0") so'm
+                                </p>
+
+                                @if (isPending)
+                                {
+                                    <!-- To'lov usullari -->
+                                    <div style="margin-bottom:15px;">
+                                        <p style="font-weight:600; margin-bottom:12px; color:#555;">To'lov usulini tanlang:</p>
+                                        <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+                                            <button onclick="doPayment('Click')" class="pay-btn" style="border:2px solid #0099ff;">
+                                                <i class="fa fa-mobile fa-lg" style="color:#0099ff;"></i><br/>
+                                                <small>Click</small>
+                                            </button>
+                                            <button onclick="doPayment('Payme')" class="pay-btn" style="border:2px solid #00ccaa;">
+                                                <i class="fa fa-credit-card fa-lg" style="color:#00ccaa;"></i><br/>
+                                                <small>Payme</small>
+                                            </button>
+                                            <button onclick="doPayment('UzCard')" class="pay-btn" style="border:2px solid #003399;">
+                                                <i class="fa fa-bank fa-lg" style="color:#003399;"></i><br/>
+                                                <small>UzCard</small>
+                                            </button>
+                                            <button onclick="doPayment('Naqd')" class="pay-btn" style="border:2px solid #27ae60;">
+                                                <i class="fa fa-money fa-lg" style="color:#27ae60;"></i><br/>
+                                                <small>Naqd</small>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Jarayon indikatori -->
+                                    <div id="payLoading" style="display:none; margin:15px 0;">
+                                        <i class="fa fa-spinner fa-spin fa-2x" style="color:#2c6fad;"></i>
+                                        <p id="payLoadingText" style="margin-top:8px; color:#555;"></p>
+                                    </div>
+
+                                    <!-- Tasdiqlash formasi (yashirin, JS orqali yuboriladi) -->
+                                    <form id="confirmForm" asp-action="ConfirmPayment" method="post" style="display:none;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@Model.Id" />
+                                        <input type="hidden" name="tolovUsuli" id="selectedPayMethod" />
+                                    </form>
+                                }
+                                else if (isPaid)
+                                {
+                                    <div style="color:#27ae60;">
+                                        <i class="fa fa-check-circle fa-3x"></i>
+                                        <p style="margin-top:10px; font-weight:600;">To'lov tasdiqlangan!</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kitoblar ro'yxati -->
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h3 class="panel-title"><i class="fa fa-book"></i> Buyurtmadagi materiallar</h3></div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Material nomi</th>
+                                        <th>Tur</th>
+                                        <th>Narxi</th>
+                                        <th>Yuklab olish</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{ int i = 1; }
+                                    @foreach (var item in Model.OrderItems)
+                                    {
+                                        bool itemDigital = item.Kitob?.MediaTuri == MediaType.ElektronKitob
+                                                        || item.Kitob?.MediaTuri == MediaType.AudioKitob
+                                                        || item.Kitob?.MediaTuri == MediaType.Video;
+                                        string turBelgi = item.Kitob?.MediaTuri switch
+                                        {
+                                            MediaType.ElektronKitob => "💻 E-kitob",
+                                            MediaType.AudioKitob    => "🎧 Audio",
+                                            MediaType.Video         => "🎬 Video",
+                                            MediaType.Jurnal        => "📰 Jurnal",
+                                            _                       => "📚 Kitob"
+                                        };
+                                        <tr>
+                                            <td>@(i++)</td>
+                                            <td>
+                                                <strong>@item.Kitob?.Nomi</strong>
+                                                @if (!string.IsNullOrEmpty(item.Kitob?.FaylFormati))
+                                                {
+                                                    <br/><small class="text-muted">@item.Kitob.FaylFormati</small>
+                                                }
+                                            </td>
+                                            <td><span style="white-space:nowrap;">@turBelgi</span></td>
+                                            <td>@item.Narxi.ToString("N0") so'm</td>
+                                            <td>
+                                                @if (itemDigital && isPaid && !string.IsNullOrEmpty(item.Kitob?.ElektronManzil))
+                                                {
+                                                    <a asp-area="User" asp-controller="Purchase"
+                                                       asp-action="Download" asp-route-kitobId="@item.KitobId"
+                                                       class="btn btn-sm btn-success">
+                                                        <i class="fa fa-download"></i>
+                                                        @if (item.Kitob!.MediaTuri == MediaType.AudioKitob)     { <text>Tinglash</text> }
+                                                        else if (item.Kitob!.MediaTuri == MediaType.Video)      { <text>Ko'rish</text> }
+                                                        else                                                    { <text>Yuklab olish</text> }
+                                                    </a>
+                                                }
+                                                else if (itemDigital && isPending)
+                                                {
+                                                    <span class="text-muted"><i class="fa fa-lock"></i> To'lovdan keyin</span>
+                                                }
+                                                else if (!itemDigital)
+                                                {
+                                                    <span class="text-muted"><i class="fa fa-home"></i> Jismoniy — kutubxonadan</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">—</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3" class="text-right"><strong>Jami:</strong></td>
+                                        <td colspan="2"><strong>@Model.JamiSumma.ToString("N0") so'm</strong></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        @if (isPaid && hasDigital)
+                        {
+                            <div class="alert alert-success" style="margin-top:12px; margin-bottom:0;">
+                                <i class="fa fa-check-circle"></i>
+                                <strong>Digital materiallaringiz tayyor!</strong>
+                                <a asp-area="User" asp-controller="Purchase" asp-action="DigitalLibrary"
+                                   class="btn btn-sm btn-success" style="margin-left:10px;">
+                                    <i class="fa fa-folder-open"></i> Raqamli kutubxonaga o'tish
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Amallar -->
+                <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+                    <a asp-action="Index" class="btn btn-default">
+                        <i class="fa fa-arrow-left"></i> Orqaga
+                    </a>
+                    @if (isPending)
+                    {
+                        <button class="btn btn-danger" onclick="document.getElementById('cancelConfirm').style.display='block'">
+                            <i class="fa fa-times"></i> Buyurtmani bekor qilish
+                        </button>
+                    }
+                </div>
+
+                <!-- Bekor qilish tasdiqlovchi blok -->
+                @if (isPending)
+                {
+                    <div id="cancelConfirm" style="display:none; margin-top:20px;" class="alert alert-warning">
+                        <p><strong>Haqiqatan ham buyurtma #@Model.Id ni bekor qilmoqchimisiz?</strong></p>
+                        <p class="text-muted small">Nusxalar avtomatik qaytariladi.</p>
+                        <form asp-action="Cancel" method="post" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <button type="submit" class="btn btn-danger btn-sm">Ha, bekor qilish</button>
+                        </form>
+                        <button class="btn btn-default btn-sm" onclick="document.getElementById('cancelConfirm').style.display='none'">Yo'q</button>
+                    </div>
+                }
+
+            </div>
+        </main>
+    </div>
+</div>
+
+@section Scripts {
+<style>
+.pay-btn {
+    background: #fff;
+    border-radius: 10px;
+    padding: 12px 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 80px;
+}
+.pay-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.pay-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+</style>
+<script>
+function doPayment(method) {
+    // Tugmalarni o'chirish
+    document.querySelectorAll('.pay-btn').forEach(function(b){ b.disabled = true; });
+
+    // Yuklash ko'rsatish
+    var loading = document.getElementById('payLoading');
+    var loadingText = document.getElementById('payLoadingText');
+    loading.style.display = 'block';
+    loadingText.textContent = method + " orqali to'lov amalga oshirilmoqda...";
+
+    // 2 soniya kutib so'ng formni yuborish
+    setTimeout(function() {
+        loadingText.textContent = "✅ To'lov muvaffaqiyatli! Tasdiqlash...";
+        document.getElementById('selectedPayMethod').value = method;
+        document.getElementById('confirmForm').submit();
+    }, 2000);
+}
+</script>
+}

@@ -1,0 +1,80 @@
+@model KutubxonaAt.Models.AbonementTuri
+@{
+    ViewData["Title"] = "Abonement turini tahrirlash";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-edit"></i> Abonement turini tahrirlash</h3>
+            </div>
+            <div class="panel-body">
+                <form asp-action="TurTahrirla" method="post">
+                    @Html.AntiForgeryToken()
+                    <input asp-for="Id" type="hidden" />
+                    <input asp-for="YaratilganSana" type="hidden" />
+
+                    <div class="form-group">
+                        <label>Nomi <span class="text-danger">*</span></label>
+                        <input asp-for="Nomi" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Tavsif</label>
+                        <textarea asp-for="Tavsif" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Narxi (so'm)</label>
+                                <input asp-for="Narxi" class="form-control" type="number" min="0" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Davomiylik (kun)</label>
+                                <select asp-for="DavomiylikKun" class="form-control">
+                                    <option value="30">30 kun (1 oy)</option>
+                                    <option value="90">90 kun (3 oy)</option>
+                                    <option value="180">180 kun (6 oy)</option>
+                                    <option value="365">365 kun (1 yil)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Bepul kitoblar (oy)</label>
+                                <input asp-for="BepulKitoblarSoni" class="form-control" type="number" min="0" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Chegirma (%)</label>
+                                <input asp-for="ChegirimFoizi" class="form-control" type="number" min="0" max="100" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Maks kitoblar</label>
+                                <input asp-for="MaksimalKitoblar" class="form-control" type="number" min="1" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label><input asp-for="BepulYetkazish" type="checkbox" /> Bepul yetkazib berish</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input asp-for="Faol" type="checkbox" /> Faol</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Saqlash</button>
+                    <a asp-action="Turlar" class="btn btn-default">Bekor qilish</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

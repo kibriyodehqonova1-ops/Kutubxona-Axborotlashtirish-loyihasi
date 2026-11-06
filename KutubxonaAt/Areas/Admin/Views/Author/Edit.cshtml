@@ -1,0 +1,76 @@
+﻿@model KutubxonaAt.Models.Muallif
+@{
+    ViewData["Title"] = "Muallifni tahrirlash";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="content-wrapper">
+    <div class="page-header">
+        <h3 class="page-title">Muallifni tahrirlash</h3>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Muallif maʼlumotlari</h4>
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group">
+                            <label asp-for="Ism"></label>
+                            <input asp-for="Ism" class="form-control" />
+                            <span asp-validation-for="Ism" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Familiya"></label>
+                            <input asp-for="Familiya" class="form-control" />
+                            <span asp-validation-for="Familiya" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Sharif"></label>
+                            <input asp-for="Sharif" class="form-control" />
+                            <span asp-validation-for="Sharif" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Taxallus"></label>
+                            <input asp-for="Taxallus" class="form-control" />
+                            <span asp-validation-for="Taxallus" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="TugilganSana"></label>
+                            <input asp-for="TugilganSana" type="date" class="form-control" />
+                            <span asp-validation-for="TugilganSana" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="VafotSana"></label>
+                            <input asp-for="VafotSana" type="date" class="form-control" />
+                            <span asp-validation-for="VafotSana" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Davlat"></label>
+                            <input asp-for="Davlat" class="form-control" />
+                            <span asp-validation-for="Davlat" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Biografiya"></label>
+                            <textarea asp-for="Biografiya" class="form-control" rows="5"></textarea>
+                            <span asp-validation-for="Biografiya" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary me-2">Saqlash</button>
+                        <a asp-action="Index" class="btn btn-light">Bekor qilish</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

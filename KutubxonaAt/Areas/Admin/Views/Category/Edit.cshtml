@@ -1,0 +1,62 @@
+﻿@model KutubxonaAt.Models.Kategoriya
+@{
+    ViewData["Title"] = "Kategoriyani tahrirlash";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="content-wrapper">
+    <div class="page-header">
+        <h3 class="page-title">Kategoriyani tahrirlash</h3>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Kategoriya maʼlumotlari</h4>
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group">
+                            <label asp-for="Nomi"></label>
+                            <input asp-for="Nomi" class="form-control" />
+                            <span asp-validation-for="Nomi" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Tavsif"></label>
+                            <textarea asp-for="Tavsif" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Tavsif" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="OtaKategoriyaId">Ota kategoriya</label>
+                            <select asp-for="OtaKategoriyaId" class="form-control">
+                                <option value="">-- Yo‘q --</option>
+                                @if (ViewBag.ParentCategories != null)
+                                {
+                                    foreach (var cat in ViewBag.ParentCategories)
+                                    {
+                                        if (cat.Id == Model.OtaKategoriyaId)
+                                        {
+                                            <option value="@cat.Id" selected>@cat.Nomi</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@cat.Id">@cat.Nomi</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="OtaKategoriyaId" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary me-2">Saqlash</button>
+                        <a asp-action="Index" class="btn btn-light">Bekor qilish</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

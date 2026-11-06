@@ -1,0 +1,108 @@
+@model IEnumerable<KutubxonaAt.Models.Order>
+@{
+    ViewData["Title"] = "Mening buyurtmalarim";
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="page-banner services-banner">
+    <div class="container">
+        <div class="banner-header">
+            <h2>Mening buyurtmalarim</h2>
+            <span class="underline center"></span>
+            <p class="lead">Siz sotib olgan kitoblar va buyurtmalar ro'yxati</p>
+        </div>
+        <div class="breadcrumb">
+            <ul>
+                <li><a asp-area="User" asp-controller="Home" asp-action="Index">Bosh sahifa</a></li>
+                <li>Buyurtmalarim</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<div id="content" class="site-content">
+    <div id="primary" class="content-area">
+        <main id="main" class="site-main">
+            <div class="container" style="padding: 40px 0;">
+
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success">@TempData["Success"]</div>
+                }
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger">@TempData["Error"]</div>
+                }
+
+                @if (!Model.Any())
+                {
+                    <div class="alert alert-info text-center">
+                        <i class="fa fa-shopping-bag fa-2x"></i><br />
+                        <strong>Hali hech qanday buyurtma qilmagansiz.</strong><br />
+                        <a asp-area="User" asp-controller="Book" asp-action="Index" class="btn btn-primary" style="margin-top:10px;">Kitoblarni ko'rish</a>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Buyurtma raqami</th>
+                                    <th>Sana</th>
+                                    <th>Kitoblar</th>
+                                    <th>Jami summa</th>
+                                    <th>To'lov usuli</th>
+                                    <th>Holat</th>
+                                    <th>Batafsil</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var order in Model)
+                                {
+                                    <tr>
+                                        <td>@order.Id</td>
+                                        <td>#@order.Id</td>
+                                        <td>@order.Sana.ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td>
+                                            @foreach (var item in order.OrderItems)
+                                            {
+                                                <div>@item.Kitob?.Nomi</div>
+                                            }
+                                        </td>
+                                        <td><strong>@order.JamiSumma.ToString("N0") so'm</strong></td>
+                                        <td>@order.TolovUsuli</td>
+                                        <td>
+                                            @if (order.Holati == "Kutilmoqda")
+                                            {
+                                                <span class="label label-warning">Kutilmoqda</span>
+                                            }
+                                            else if (order.Holati == "To'langan")
+                                            {
+                                                <span class="label label-success">To'langan</span>
+                                            }
+                                            else if (order.Holati == "Bekor qilingan")
+                                            {
+                                                <span class="label label-default">Bekor qilingan</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="label label-info">@order.Holati</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-default">
+                                                <i class="fa fa-eye"></i> Ko'rish
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </main>
+    </div>
+</div>

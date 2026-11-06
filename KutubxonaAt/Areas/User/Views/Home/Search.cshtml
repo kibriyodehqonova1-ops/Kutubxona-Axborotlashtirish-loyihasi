@@ -1,0 +1,41 @@
+﻿@model IEnumerable<KutubxonaAt.Models.Kitob>
+@{
+    ViewData["Title"] = "Qidiruv natijalari";
+}
+
+<div class="container mt-4">
+    <div class="page-header">
+        <h1>Qidiruv natijalari</h1>
+        <p>@ViewBag.Keywords - bo‘yicha @Model.Count() ta natija topildi.</p>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">Hech qanday kitob topilmadi.</div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var book in Model)
+            {
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="panel panel-default">
+                        <div class="panel-body text-center">
+                            @if (!string.IsNullOrEmpty(book.Rasm))
+                            {
+                                <img src="@book.Rasm" style="height: 150px;" />
+                            }
+                            else
+                            {
+                                <i class="fa fa-book fa-4x"></i>
+                            }
+                            <h4>@book.Nomi</h4>
+                            <p>@string.Join(", ", book.KitobMualliflari.Select(km => km.Muallif.Familiya + " " + km.Muallif.Ism))</p>
+                            <a asp-controller="Book" asp-action="Details" asp-route-id="@book.Id" class="btn btn-primary">Batafsil</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

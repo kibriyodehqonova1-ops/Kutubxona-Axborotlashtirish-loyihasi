@@ -1,0 +1,59 @@
+﻿@model IEnumerable<KutubxonaAt.Models.Bron>
+
+@{
+    ViewData["Title"] = "Mening bronlarim";
+}
+
+<h1><i class="fa fa-calendar"></i> Mening bronlarim</h1>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Siz hali hech qanday kitob bron qilmagansiz.</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Kitob nomi</th>
+                <th>Bron qilingan sana</th>
+                <th>Amal qilish muddati</th>
+                <th>Holati</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var bron in Model)
+            {
+                <tr>
+                    <td>@bron.Kitob?.Nomi</td>
+                    <td>@bron.BronSana.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>@bron.AmalMuddati.ToString("dd.MM.yyyy")</td>
+                    <td>
+                        @if (bron.Holati == "Faol")
+                        {
+                            <span class="badge bg-success">Faol</span>
+                        }
+                        else if (bron.Holati == "Bekor qilingan")
+                        {
+                            <span class="badge bg-danger">Bekor qilingan</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">@bron.Holati</span>
+                        }
+                    </td>
+                    <td>
+                        @if (bron.Holati == "Faol")
+                        {
+                            <form asp-action="BekorQilish" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@bron.Id" />
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bronni bekor qilmoqchimisiz?')">Bekor qilish</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

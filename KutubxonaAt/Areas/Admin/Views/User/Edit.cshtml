@@ -1,0 +1,123 @@
+﻿@using KutubxonaAt.ViewModels.User
+@model UserEditViewModel
+@{
+    ViewData["Title"] = "Foydalanuvchini tahrirlash";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="content-wrapper">
+    <div class="page-header">
+        <h3 class="page-title">Foydalanuvchini tahrirlash</h3>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Foydalanuvchi maʼlumotlari</h4>
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group">
+                            <label asp-for="Ism"></label>
+                            <input asp-for="Ism" class="form-control" />
+                            <span asp-validation-for="Ism" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Familiya"></label>
+                            <input asp-for="Familiya" class="form-control" />
+                            <span asp-validation-for="Familiya" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Sharif"></label>
+                            <input asp-for="Sharif" class="form-control" />
+                            <span asp-validation-for="Sharif" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Email"></label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Telefon"></label>
+                            <input asp-for="Telefon" class="form-control" />
+                            <span asp-validation-for="Telefon" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Manzil"></label>
+                            <input asp-for="Manzil" class="form-control" />
+                            <span asp-validation-for="Manzil" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="TugilganSana"></label>
+                            <input asp-for="TugilganSana" type="date" class="form-control" />
+                            <span asp-validation-for="TugilganSana" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Turi"></label>
+                            <select asp-for="Turi" class="form-control">
+                                <option value="Talaba">Talaba</option>
+                                <option value="O'qituvchi">O'qituvchi</option>
+                                <option value="Xodim">Xodim</option>
+                                <option value="Nafaqaxo'r">Nafaqaxo'r</option>
+                                <option value="Tadbirkor">Tadbirkor</option>
+                                <option value="Boshqa">Boshqa</option>
+                            </select>
+                            <span asp-validation-for="Turi" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Fakultet"></label>
+                            <input asp-for="Fakultet" class="form-control" />
+                            <span asp-validation-for="Fakultet" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Guruh"></label>
+                            <input asp-for="Guruh" class="form-control" />
+                            <span asp-validation-for="Guruh" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="TalabaId"></label>
+                            <input asp-for="TalabaId" class="form-control" />
+                            <span asp-validation-for="TalabaId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input asp-for="Faol" class="form-check-input" />
+                            <label asp-for="Faol" class="form-check-label"></label>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="AmalMuddati"></label>
+                            <input asp-for="AmalMuddati" type="date" class="form-control" />
+                            <span asp-validation-for="AmalMuddati" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Rollar</label>
+                            <select asp-for="SelectedRoles" asp-items="Model.AllRoles" class="form-control" multiple="multiple"></select>
+                            <span class="text-muted">Ctrl tugmasini bosib bir nechta tanlang</span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary me-2">Saqlash</button>
+                        <a asp-action="Index" class="btn btn-light">Bekor qilish</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

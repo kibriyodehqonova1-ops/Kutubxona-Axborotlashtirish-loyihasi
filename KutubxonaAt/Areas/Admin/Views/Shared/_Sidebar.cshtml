@@ -1,0 +1,121 @@
+﻿<nav class="sidebar sidebar-offcanvas" id="sidebar">
+    <ul class="nav">
+        <li class="nav-item nav-profile">
+            <a href="#" class="nav-link">
+                <div class="nav-profile-image">
+                    <img src="~/admin-assets/images/faces/face1.jpg" alt="profile" />
+                    <span class="login-status online"></span>
+                </div>
+                <div class="nav-profile-text d-flex flex-column">
+                    <span class="font-weight-bold mb-2">@User.Identity?.Name</span>
+                    <span class="text-secondary text-small">Administrator</span>
+                </div>
+                <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Admin" asp-controller="Home" asp-action="Index">
+                <span class="menu-title">Dashboard</span>
+                <i class="mdi mdi-home menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Admin" asp-controller="Category" asp-action="Index">
+                <span class="menu-title">Kategoriyalar</span>
+                <i class="mdi mdi-tag menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Admin" asp-controller="Author" asp-action="Index">
+                <span class="menu-title">Mualliflar</span>
+                <i class="mdi mdi-account-edit menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Admin" asp-controller="User" asp-action="Index">
+                <span class="menu-title">Foydalanuvchilar</span>
+                <i class="mdi mdi-account-group menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Admin" asp-controller="Fine" asp-action="Index">
+                <span class="menu-title">Jarimalar</span>
+                <i class="mdi mdi-cash-multiple menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Admin" asp-controller="Book" asp-action="Index">
+                <span class="menu-title">Kitoblar</span>
+                <i class="mdi mdi-book-open-page-variant menu-icon"></i>
+            </a>
+        </li>
+       
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Admin" asp-controller="BookCopy" asp-action="Index">
+                <span class="menu-title">Kitob nusxalari</span>
+                <i class="mdi mdi-book-multiple menu-icon"></i>
+            </a>
+        </li>
+       
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Admin" asp-controller="Account" asp-action="ChangePassword">
+                <span class="menu-title">Parolni o‘zgartirish</span>
+                <i class="mdi mdi-key menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Admin" asp-controller="Purchase" asp-action="Index">
+                <span class="menu-title">Buyurtmalar (sotuv)</span>
+                <i class="mdi mdi-cart menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Admin" asp-controller="Bron" asp-action="Index">
+                <span class="menu-title">Bronlar</span>
+                <i class="mdi mdi-calendar-clock menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Admin" asp-controller="Beruv" asp-action="Index">
+                <span class="menu-title">Beruvlar</span>
+                <i class="mdi mdi-book-open-page-variant menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Admin" asp-controller="Message" asp-action="Index">
+                <span class="menu-title">Xabarlar</span>
+                <i class="mdi mdi-message-text menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Admin" asp-controller="Abonement" asp-action="Index">
+                <span class="menu-title">Abonementlar</span>
+                <i class="mdi mdi-star menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Admin" asp-controller="Abonement" asp-action="Turlar">
+                <span class="menu-title">Abonement turlari</span>
+                <i class="mdi mdi-star-outline menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Admin" asp-controller="YetkazibBerish" asp-action="Index">
+                <span class="menu-title">Yetkazib berish</span>
+                <i class="mdi mdi-truck menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Admin" asp-controller="Report" asp-action="Index">
+                <span class="menu-title">Hisobotlar</span>
+                <i class="mdi mdi-chart-bar menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Home" asp-controller="Home" asp-action="Index">
+                <span class="menu-title">Chiqish</span>
+                <i class="mdi mdi-logout menu-icon"></i>
+            </a>
+        </li>
+    </ul>
+</nav>

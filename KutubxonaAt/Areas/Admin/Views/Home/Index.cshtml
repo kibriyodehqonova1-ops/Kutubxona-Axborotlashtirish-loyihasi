@@ -1,0 +1,219 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-header">
+    <h3 class="page-title">
+        <span class="page-title-icon bg-gradient-primary text-white me-2">
+            <i class="mdi mdi-home"></i>
+        </span> Dashboard
+    </h3>
+</div>
+
+<!-- Asosiy statistika -->
+<div class="row">
+    <div class="col-md-4 stretch-card grid-margin">
+        <div class="card bg-gradient-info card-img-holder text-white">
+            <div class="card-body">
+                <img src="~/admin-assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                <h4 class="font-weight-normal mb-3">Kitoblar <i class="mdi mdi-book-open-page-variant mdi-24px float-end"></i></h4>
+                <h2 class="mb-5">@ViewBag.BooksCount</h2>
+                <h6 class="card-text">Kutubxona fondidagi kitoblar soni</h6>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 stretch-card grid-margin">
+        <div class="card bg-gradient-success card-img-holder text-white">
+            <div class="card-body">
+                <img src="~/admin-assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                <h4 class="font-weight-normal mb-3">Berilgan kitoblar <i class="mdi mdi-hand-heart mdi-24px float-end"></i></h4>
+                <h2 class="mb-5">@ViewBag.IssuedCount</h2>
+                <h6 class="card-text">Hozirda kitobxonlarda</h6>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 stretch-card grid-margin">
+        <div class="card bg-gradient-danger card-img-holder text-white">
+            <div class="card-body">
+                <img src="~/admin-assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                <h4 class="font-weight-normal mb-3">Qaytarilgan <i class="mdi mdi-undo mdi-24px float-end"></i></h4>
+                <h2 class="mb-5">@ViewBag.ReturnedCount</h2>
+                <h6 class="card-text">Jami qaytarilgan kitoblar</h6>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 stretch-card grid-margin">
+        <div class="card bg-gradient-warning card-img-holder text-white">
+            <div class="card-body">
+                <img src="~/admin-assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                <h4 class="font-weight-normal mb-3">Foydalanuvchilar <i class="mdi mdi-account-group mdi-24px float-end"></i></h4>
+                <h2 class="mb-5">@ViewBag.UsersCount</h2>
+                <h6 class="card-text">Ro'yxatdan o'tgan foydalanuvchilar</h6>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 stretch-card grid-margin">
+        <div class="card bg-gradient-primary card-img-holder text-white">
+            <div class="card-body">
+                <img src="~/admin-assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                <h4 class="font-weight-normal mb-3">Mualliflar <i class="mdi mdi-account-edit mdi-24px float-end"></i></h4>
+                <h2 class="mb-5">@ViewBag.AuthorsCount</h2>
+                <h6 class="card-text">Katalogdagi mualliflar soni</h6>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 stretch-card grid-margin">
+        <div class="card bg-gradient-dark card-img-holder text-white">
+            <div class="card-body">
+                <img src="~/admin-assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                <h4 class="font-weight-normal mb-3">Kategoriyalar <i class="mdi mdi-tag mdi-24px float-end"></i></h4>
+                <h2 class="mb-5">@ViewBag.CategoriesCount</h2>
+                <h6 class="card-text">Kitob turkumlari</h6>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Qo'shimcha ogohlantirishlar -->
+<div class="row">
+    @if ((int)ViewBag.OverdueCount > 0)
+    {
+        <div class="col-md-3 stretch-card grid-margin">
+            <div class="card bg-gradient-danger card-img-holder text-white">
+                <div class="card-body">
+                    <h4 class="font-weight-normal mb-3">Muddati o'tgan <i class="mdi mdi-alert mdi-24px float-end"></i></h4>
+                    <h2 class="mb-5">@ViewBag.OverdueCount</h2>
+                    <h6 class="card-text">
+                        <a asp-area="Admin" asp-controller="Beruv" asp-action="Index" asp-route-status="overdue" class="text-white">
+                            Ko'rish <i class="mdi mdi-arrow-right"></i>
+                        </a>
+                    </h6>
+                </div>
+            </div>
+        </div>
+    }
+    @if ((int)ViewBag.PendingFinesCount > 0)
+    {
+        <div class="col-md-3 stretch-card grid-margin">
+            <div class="card bg-gradient-warning card-img-holder text-white">
+                <div class="card-body">
+                    <h4 class="font-weight-normal mb-3">Kutilgan jarimalar <i class="mdi mdi-currency-usd mdi-24px float-end"></i></h4>
+                    <h2 class="mb-5">@ViewBag.PendingFinesCount</h2>
+                    <h6 class="card-text">
+                        Jami: @((decimal)ViewBag.TotalFinesAmount).ToString("N0") so'm<br />
+                        <a asp-area="Admin" asp-controller="Fine" asp-action="Index" class="text-white">Ko'rish <i class="mdi mdi-arrow-right"></i></a>
+                    </h6>
+                </div>
+            </div>
+        </div>
+    }
+    @if ((int)ViewBag.ActiveReservationsCount > 0)
+    {
+        <div class="col-md-3 stretch-card grid-margin">
+            <div class="card bg-gradient-info card-img-holder text-white">
+                <div class="card-body">
+                    <h4 class="font-weight-normal mb-3">Faol bronlar <i class="mdi mdi-calendar-check mdi-24px float-end"></i></h4>
+                    <h2 class="mb-5">@ViewBag.ActiveReservationsCount</h2>
+                    <h6 class="card-text">
+                        <a asp-area="Admin" asp-controller="Bron" asp-action="Index" class="text-white">Ko'rish <i class="mdi mdi-arrow-right"></i></a>
+                    </h6>
+                </div>
+            </div>
+        </div>
+    }
+    @if ((int)ViewBag.PendingOrdersCount > 0)
+    {
+        <div class="col-md-3 stretch-card grid-margin">
+            <div class="card bg-gradient-success card-img-holder text-white">
+                <div class="card-body">
+                    <h4 class="font-weight-normal mb-3">Yangi buyurtmalar <i class="mdi mdi-shopping mdi-24px float-end"></i></h4>
+                    <h2 class="mb-5">@ViewBag.PendingOrdersCount</h2>
+                    <h6 class="card-text">To'lov kutilmoqda</h6>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- So'nggi beruvlar va yangi foydalanuvchilar -->
+<div class="row">
+    <div class="col-md-7 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">So'nggi beruvlar</h4>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Foydalanuvchi</th>
+                                <th>Kitob</th>
+                                <th>Berilgan sana</th>
+                                <th>Qaytarish muddati</th>
+                                <th>Holat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (ViewBag.RecentBeruvlar != null)
+                            {
+                                foreach (var beruv in ViewBag.RecentBeruvlar)
+                                {
+                                    bool overdue = beruv.QaytarishMuddati < DateTime.Now && beruv.Holati != "Qaytarilgan";
+                                    <tr class="@(overdue ? "table-danger" : "")">
+                                        <td>@beruv.Foydalanuvchi?.Familiya @beruv.Foydalanuvchi?.Ism</td>
+                                        <td>@beruv.KitobNusxa?.Kitob?.Nomi</td>
+                                        <td>@beruv.BerilganSana.ToString("dd.MM.yyyy")</td>
+                                        <td>@beruv.QaytarishMuddati.ToString("dd.MM.yyyy")</td>
+                                        <td>
+                                            @if (overdue)
+                                            {
+                                                <span class="badge badge-danger">Muddati o'tgan</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-success">@beruv.Holati</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <a asp-area="Admin" asp-controller="Beruv" asp-action="Index" class="btn btn-sm btn-primary">Barchasini ko'rish</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Yangi foydalanuvchilar</h4>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>F.I.O</th>
+                                <th>Turi</th>
+                                <th>Sana</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (ViewBag.RecentUsers != null)
+                            {
+                                foreach (var user in ViewBag.RecentUsers)
+                                {
+                                    <tr>
+                                        <td>@user.Familiya @user.Ism</td>
+                                        <td><span class="badge badge-info">@user.Turi</span></td>
+                                        <td>@user.RoyxatSanasi.ToString("dd.MM.yyyy")</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <a asp-area="Admin" asp-controller="User" asp-action="Index" class="btn btn-sm btn-primary">Barchasini ko'rish</a>
+            </div>
+        </div>
+    </div>
+</div>

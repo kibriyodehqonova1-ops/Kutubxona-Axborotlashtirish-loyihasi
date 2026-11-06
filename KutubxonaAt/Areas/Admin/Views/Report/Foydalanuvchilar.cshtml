@@ -1,0 +1,73 @@
+@{
+    ViewData["Title"] = "Foydalanuvchilar hisoboti";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-users"></i> Foydalanuvchilar faollik hisoboti</h3>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Ism Familiya</th>
+                        <th>Email</th>
+                        <th>Turi</th>
+                        <th>Beruvlar</th>
+                        <th>Jarimalar</th>
+                        <th>Abonement</th>
+                        <th>Holat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var users = ViewBag.Foydalanuvchilar as IEnumerable<dynamic> ?? Enumerable.Empty<dynamic>();
+                        int i = 1;
+                        foreach (var u in users)
+                        {
+                            <tr>
+                                <td>@(i++)</td>
+                                <td>@u.Ism @u.Familiya</td>
+                                <td><small>@u.Email</small></td>
+                                <td>@u.Turi</td>
+                                <td>
+                                    <span class="badge">@u.BeruvlarSoni</span>
+                                </td>
+                                <td>
+                                    @if (u.JarimalarSoni > 0)
+                                    {
+                                        <span class="label label-danger">@u.JarimalarSoni ta</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (u.FaolAbonement)
+                                    {
+                                        <span class="label label-success">Faol</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="label label-@(u.Faol ? "success" : "default")">
+                                        @(u.Faol ? "Faol" : "Bloklangan")
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<a asp-action="Index" class="btn btn-default"><i class="fa fa-arrow-left"></i> Orqaga</a>

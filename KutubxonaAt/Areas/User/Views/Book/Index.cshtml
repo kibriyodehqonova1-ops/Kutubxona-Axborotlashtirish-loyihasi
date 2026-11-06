@@ -1,0 +1,322 @@
+﻿@using static KutubxonaAt.Models.Kitob
+@using System.Security.Claims
+@model IEnumerable<KutubxonaAt.Models.Kitob>
+@{
+    ViewData["Title"] = "Kitoblar va media ro’yxati";
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    bool isAuth = User.Identity?.IsAuthenticated ?? false;
+    string loginUrl = "/Account/Login?returnUrl=" + Uri.EscapeDataString(Context.Request.Path + Context.Request.QueryString);
+}
+
+<!-- Page Banner -->
+<section class="page-banner services-banner">
+    <div class="container">
+        <div class="banner-header">
+            <h2>Kitoblar va media ro‘yxati</h2>
+            <span class="underline center"></span>
+            <p class="lead">Kutubxona fondidagi barcha kitoblar va media materiallar</p>
+        </div>
+        <div class="breadcrumb">
+            <ul>
+                <li><a asp-area="User" asp-controller="Home" asp-action="Index">Bosh sahifa</a></li>
+                <li>Kitoblar va media</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<div id="content" class="site-content">
+    <div id="primary" class="content-area">
+        <main id="main" class="site-main">
+            <div class="books-full-width">
+                <div class="container">
+                    <!-- Search Section -->
+                    <section class="search-filters">
+                        <div class="filter-box">
+                            <h3>Kutubxonadan nimani qidiryapsiz?</h3>
+                            <form method="get" asp-action="Index" id="filterForm">
+                                <div class="col-md-4 col-sm-6">
+                                    <div class="form-group">
+                                        <input class="form-control" placeholder="Kalit so‘z bo‘yicha qidirish" id="keywords" name="keywords" type="text" value="@ViewBag.Keywords">
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="form-group">
+                                        <select name="catalogId" id="catalogId" class="form-control">
+                                            <option value="">Katalogni tanlang</option>
+                                            <option value="1" selected="@(ViewBag.SelectedCatalog == 1)">📚 Asosiy fond (Kitoblar)</option>
+                                            <option value="2" selected="@(ViewBag.SelectedCatalog == 2)">💻 Elektron kitoblar</option>
+                                            <option value="3" selected="@(ViewBag.SelectedCatalog == 3)">🎧 Audio kitoblar</option>
+                                            <option value="4" selected="@(ViewBag.SelectedCatalog == 4)">📰 Jurnallar</option>
+                                            <option value="5" selected="@(ViewBag.SelectedCatalog == 5)">🎬 Videolar</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="form-group">
+                                        <select name="categoryId" id="categoryId" class="form-control">
+                                            <option value="">Barcha kategoriyalar</option>
+                                            @foreach (var cat in ViewBag.Categories)
+                                            {
+                                                <option value="@cat.Id" selected="@(ViewBag.SelectedCategory == cat.Id)">@cat.Nomi</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-6">
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" name="onSale" value="true" @(ViewBag.OnSale ? "checked" : "") />
+                                                Faqat sotuvdagi kitoblar
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-6">
+                                    <div class="form-group">
+                                        <input class="form-control" type="submit" value="Qidirish">
+                                    </div>
+                                </div>
+                                <input type="hidden" name="page" id="pageInput" value="1" />
+                                <input type="hidden" name="sortBy" id="sortByInput" value="@ViewBag.SortBy" />
+                            </form>
+                        </div>
+                    </section>
+
+                    <!-- Saralash -->
+                    <div class="filter-options margin-list">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-3">
+                                <select name="sortBySelect" id="sortBySelect" class="orderby">
+                                    <option value="name_asc" selected="@(ViewBag.SortBy == "name_asc")">📖 Nomi (A→Z)</option>
+                                    <option value="name_desc" selected="@(ViewBag.SortBy == "name_desc")">📖 Nomi (Z→A)</option>
+                                    <option value="popular" selected="@(ViewBag.SortBy == "popular")">🔥 Ommaboplik</option>
+                                    <option value="rating" selected="@(ViewBag.SortBy == "rating")">⭐ Reyting</option>
+                                    <option value="new" selected="@(ViewBag.SortBy == "new")">🆕 Yangi nashrlar</option>
+                                    <option value="price_asc" selected="@(ViewBag.SortBy == "price_asc")">💰 Narxi (arzon→qimmat)</option>
+                                    <option value="price_desc" selected="@(ViewBag.SortBy == "price_desc")">💰 Narxi (qimmat→arzon)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kitoblar ro‘yxati -->
+                    <div class="booksmedia-fullwidth">
+                        <ul>
+                            @foreach (var book in Model)
+                            {
+                                var mualliflar = string.Join(", ", book.KitobMualliflari.Select(km => $"{km.Muallif.Familiya} {km.Muallif.Ism}"));
+                                string rasmUrl = !string.IsNullOrEmpty(book.Rasm) ? book.Rasm : "/images/default-book.jpg";
+                                string iconClass = book.MediaTuri switch
+                                {
+                                    MediaType.ElektronKitob => "blue-icon",
+                                    MediaType.AudioKitob    => "yellow-icon",
+                                    MediaType.Jurnal        => "green-icon",
+                                    MediaType.Video         => "red-icon",
+                                    _                       => "light-green-icon"
+                                };
+                                string mediaBelgi = book.MediaTuri switch
+                                {
+                                    MediaType.ElektronKitob => "💻 E-kitob",
+                                    MediaType.AudioKitob    => "🎧 Audio",
+                                    MediaType.Jurnal        => "📰 Jurnal",
+                                    MediaType.Video         => "🎬 Video",
+                                    _                       => "📚 Kitob"
+                                };
+                                bool itemDigital = book.MediaTuri == MediaType.ElektronKitob
+                                               || book.MediaTuri == MediaType.AudioKitob
+                                               || book.MediaTuri == MediaType.Video;
+                                // Sotuvda: digital => narxi > 0; jismoniy => sotuvda belgilangan nusxa bor
+                                bool forSale = itemDigital
+                                    ? (book.Narxi.HasValue && book.Narxi > 0)
+                                    : book.KitobNusxalari.Any(kn => kn.SotuvgaQoyilgan && kn.Holati == "Mavjud");
+                                // Savatga qo’shish tugmasi ko’rinadimi
+                                bool canBuy = forSale;
+                                <li>
+                                    <div class="book-list-icon @iconClass"></div>
+                                    <span class="book-media-badge">@mediaBelgi</span>
+                                    @if (forSale)
+                                    {
+                                        <span class="book-sale-badge">💰 Sotuvda</span>
+                                    }
+                                    <figure>
+                                        <a asp-area="User" asp-controller="Book" asp-action="Details" asp-route-id="@book.Id">
+                                            <img src="@rasmUrl" alt="@book.Nomi">
+                                        </a>
+                                        <figcaption>
+                                            <header>
+                                                <h4><a asp-area="User" asp-controller="Book" asp-action="Details" asp-route-id="@book.Id">@book.Nomi</a></h4>
+                                                <p><strong>Muallif:</strong> @mualliflar</p>
+                                                <p><strong>ISBN:</strong> @(string.IsNullOrEmpty(book.ISBN) ? "Mavjud emas" : book.ISBN)</p>
+                                                @if (forSale && book.Narxi.HasValue)
+                                                {
+                                                    <p><strong style="color:#27ae60;">Narxi: @book.Narxi.Value.ToString("N0") so’m</strong></p>
+                                                }
+                                            </header>
+                                            <p>@(book.Tavsif?.Length > 150 ? book.Tavsif.Substring(0, 150) + "..." : book.Tavsif ?? "Tavsif mavjud emas")</p>
+                                            <div class="actions">
+                                                <ul>
+                                                    <li>
+                                                        @if (canBuy)
+                                                        {
+                                                            @if (isAuth)
+                                                            {
+                                                                <form asp-area="User" asp-controller="Cart" asp-action="AddToCart" method="post" style="display:inline;">
+                                                                    @Html.AntiForgeryToken()
+                                                                    <input type="hidden" name="kitobId" value="@book.Id" />
+                                                                    <button type="submit" class="btn-link" style="background:none;border:none;padding:0;color:#333;"
+                                                                            data-toggle="tooltip" title="Savatga qo’shish">
+                                                                        <i class="fa fa-shopping-cart"></i>
+                                                                    </button>
+                                                                </form>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a href="@loginUrl" data-toggle="tooltip" title="Savatga qo’shish (kirish kerak)">
+                                                                    <i class="fa fa-shopping-cart"></i>
+                                                                </a>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style="color:#ccc;" data-toggle="tooltip" title="Sotuvda emas">
+                                                                <i class="fa fa-shopping-cart"></i>
+                                                            </span>
+                                                        }
+                                                    </li>
+                                                    <li>
+                                                        <a href="javascript:void(0)" class="like-btn" data-toggle="tooltip" title="Yoqtirish">
+                                                            <i class="fa fa-heart"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a asp-area="User" asp-controller="Book" asp-action="Details" asp-route-id="@book.Id" data-toggle="tooltip" title="Batafsil">
+                                                            <i class="fa fa-search"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="javascript:void(0)" onclick="libPrint()" data-toggle="tooltip" title="Chop etish">
+                                                            <i class="fa fa-print"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        @{
+                                                            var bookDetailUrl = Url.Action("Details", "Book", new { area = "User", id = book.Id }, Context.Request.Scheme) ?? "#";
+                                                        }
+                                                        <a href="javascript:void(0)" onclick="libShare(‘@book.Nomi.Replace("’","\\’")’, ‘@bookDetailUrl’)" data-toggle="tooltip" title="Ulashish">
+                                                            <i class="fa fa-share-alt"></i>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </figcaption>
+                                    </figure>
+                                </li>
+                            }
+                        </ul>
+                        @if (!Model.Any())
+                        {
+                            <div class="alert alert-warning text-center">Hech qanday kitob topilmadi. Iltimos, boshqa so‘z bilan qidiring.</div>
+                        }
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav class="navigation pagination text-center">
+                        <div class="nav-links">
+                            @if (currentPage > 1)
+                            {
+                                <a class="prev page-numbers" href="javascript:goToPage(@(currentPage - 1))"><i class="fa fa-long-arrow-left"></i> Oldingi</a>
+                            }
+                            @for (int i = 1; i <= totalPages; i++)
+                            {
+                                if (i == currentPage)
+                                {
+                                    <span class="page-numbers current">@i</span>
+                                }
+                                else
+                                {
+                                    <a class="page-numbers" href="javascript:goToPage(@i)">@i</a>
+                                }
+                            }
+                            @if (currentPage < totalPages)
+                            {
+                                <a class="next page-numbers" href="javascript:goToPage(@(currentPage + 1))">Keyingi <i class="fa fa-long-arrow-right"></i></a>
+                            }
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    function goToPage(page) {
+        document.getElementById('pageInput').value = page;
+        document.getElementById('filterForm').submit();
+    }
+
+    const sortSelect = document.getElementById('sortBySelect');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            document.getElementById('sortByInput').value = this.value;
+            document.getElementById('pageInput').value = 1;
+            document.getElementById('filterForm').submit();
+        });
+    }
+
+    document.querySelectorAll('.like-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            this.classList.toggle('liked');
+        });
+    });
+</script>
+
+<style>
+    .like-btn i {
+        color: #ccc;
+        transition: color 0.2s;
+    }
+    .like-btn.liked i {
+        color: #e74c3c;
+    }
+    .btn-link:hover {
+        color: #e74c3c;
+    }
+    /* Media tur badge (chapda) */
+    .book-media-badge {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        background: rgba(44,111,173,0.85);
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 10px;
+        z-index: 2;
+    }
+    /* Sotuvda badge (o'ngda) */
+    .book-sale-badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: #27ae60;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 12px;
+        z-index: 2;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    /* li uchun position:relative kerak */
+    .booksmedia-fullwidth ul li {
+        position: relative;
+    }
+</style>

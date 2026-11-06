@@ -1,0 +1,222 @@
+﻿@model KutubxonaAt.Models.ContactMessage
+@{
+    ViewData["Title"] = "Bog‘lanish";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Page Banner -->
+<section class="page-banner services-banner">
+    <div class="container">
+        <div class="banner-header">
+            <h2>Bog‘lanish</h2>
+            <span class="underline center"></span>
+            <p class="lead">Biz bilan bog‘laning, savollaringizga javob oling.</p>
+        </div>
+        <div class="breadcrumb">
+            <ul>
+                <li><a href="/">Bosh sahifa</a></li>
+                <li>Bog‘lanish</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Us Section -->
+<div id="content" class="site-content">
+    <div id="primary" class="content-area">
+        <main id="main" class="site-main">
+            <div class="contact-main">
+                <div class="contact-us">
+                    <div class="container">
+                        <!-- Flipcard location info -->
+                        <div class="contact-location">
+                            <div class="flipcard">
+                                <div class="front">
+                                    <div class="top-info">
+                                        <span><i class="fa fa-map-marker" aria-hidden="true"></i> Manzil</span>
+                                    </div>
+                                    <div class="bottom-info">
+                                        <span class="top-arrow"></span>
+                                        <ul>
+                                            <li>121 King Street, Melbourne</li>
+                                            <li>Victoria 3000 Australia</li>
+                                            <li>PO Box 16122</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="back">
+                                    <div class="bottom-info orange-bg">
+                                        <span class="bottom-arrow"></span>
+                                        <ul>
+                                            <li>121 King Street, Melbourne</li>
+                                            <li>Victoria 3000 Australia</li>
+                                            <li>PO Box 16122</li>
+                                        </ul>
+                                    </div>
+                                    <div class="top-info dark-bg">
+                                        <span><i class="fa fa-map-marker" aria-hidden="true"></i> Manzil</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flipcard">
+                                <div class="front">
+                                    <div class="top-info">
+                                        <span><i class="fa fa-fax" aria-hidden="true"></i> Telefon va faks</span>
+                                    </div>
+                                    <div class="bottom-info">
+                                        <span class="top-arrow"></span>
+                                        <ul>
+                                            <li><a href="tel:+123-456-7890">Mahalliy: +123-456-7890</a></li>
+                                            <li><a href="tel:+123-456-7890">Mahalliy: +123-456-7890</a></li>
+                                            <li><a href="fax:(001)-254-7359">Faks: (001)-254-7359</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="back">
+                                    <div class="bottom-info orange-bg">
+                                        <span class="bottom-arrow"></span>
+                                        <ul>
+                                            <li><a href="tel:+123-456-7890">Mahalliy: +123-456-7890</a></li>
+                                            <li><a href="tel:+123-456-7890">Mahalliy: +123-456-7890</a></li>
+                                            <li><a href="fax:(001)-254-7359">Faks: (001)-254-7359</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="top-info dark-bg">
+                                        <span><i class="fa fa-fax" aria-hidden="true"></i> Telefon va faks</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flipcard">
+                                <div class="front">
+                                    <div class="top-info">
+                                        <span><i class="fa fa-envelope" aria-hidden="true"></i> Elektron pochta</span>
+                                    </div>
+                                    <div class="bottom-info">
+                                        <span class="top-arrow"></span>
+                                        <ul>
+                                            <li>www.libraria.uz</li>
+                                            <li>support@libraria.uz</li>
+                                            <li>info@libraria.uz</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="back">
+                                    <div class="bottom-info orange-bg">
+                                        <span class="bottom-arrow"></span>
+                                        <ul>
+                                            <li><a href="http://www.libraria.uz">www.libraria.uz</a></li>
+                                            <li><a href="mailto:support@libraria.uz">support@libraria.uz</a></li>
+                                            <li><a href="mailto:info@libraria.uz">info@libraria.uz</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="top-info dark-bg">
+                                        <span><i class="fa fa-envelope" aria-hidden="true"></i> Elektron pochta</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="row">
+                            <div class="contact-area">
+                                <div class="container">
+                                    <!-- Map column -->
+                                    <div class="col-md-5 col-md-offset-1 border-gray-left">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="contact-map bg-light margin-left">
+                                                    <div class="company-map" id="map"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Form column -->
+                                    <div class="col-md-5 border-gray-right">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="contact-form bg-light margin-right">
+                                                    <h2>Bizga xabar yuboring</h2>
+                                                    <span class="underline left"></span>
+                                                    <div class="contact-fields">
+                                                        <!-- Success/Error messages -->
+                                                        @if (TempData["Success"] != null)
+                                                        {
+                                                            <div class="alert alert-success">@TempData["Success"]</div>
+                                                        }
+                                                        @if (TempData["Error"] != null)
+                                                        {
+                                                            <div class="alert alert-danger">@TempData["Error"]</div>
+                                                        }
+
+                                                        <form asp-controller="Home" asp-action="Contact" method="post" id="contactForm">
+                                                            @Html.AntiForgeryToken()
+                                                            <div class="row">
+                                                                <div class="col-md-6 col-sm-6">
+                                                                    <div class="form-group">
+                                                                        <input asp-for="Ism" class="form-control" placeholder="Ism *" />
+                                                                        <span asp-validation-for="Ism" class="text-danger"></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6 col-sm-6">
+                                                                    <div class="form-group">
+                                                                        <input asp-for="Familiya" class="form-control" placeholder="Familiya *" />
+                                                                        <span asp-validation-for="Familiya" class="text-danger"></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6 col-sm-6">
+                                                                    <div class="form-group">
+                                                                        <input asp-for="Email" class="form-control" type="email" placeholder="Email *" />
+                                                                        <span asp-validation-for="Email" class="text-danger"></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6 col-sm-6">
+                                                                    <div class="form-group">
+                                                                        <input asp-for="Telefon" class="form-control" placeholder="Telefon" />
+                                                                        <span asp-validation-for="Telefon" class="text-danger"></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-12">
+                                                                    <div class="form-group">
+                                                                        <textarea asp-for="Xabar" class="form-control" rows="5" placeholder="Xabaringiz *"></textarea>
+                                                                        <span asp-validation-for="Xabar" class="text-danger"></span>
+                                                                        <div class="clearfix"></div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-12">
+                                                                    <div class="form-group form-submit">
+                                                                        <input class="btn btn-default" id="submit-contact-form" type="submit" name="submit" value="Xabarni yuborish" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <!-- Google Maps API (placeholder, sizning haqiqiy kalitingiz bilan almashtiring) -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+    <script>
+        function initMap() {
+            // Xarita sozlamalari – kerakli manzilga moslang
+            var location = { lat: -37.8136, lng: 144.9631 }; // Melbourne
+            var map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 15,
+                center: location
+            });
+            var marker = new google.maps.Marker({ position: location, map: map });
+        }
+    </script>
+}

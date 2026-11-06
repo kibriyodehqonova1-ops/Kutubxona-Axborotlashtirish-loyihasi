@@ -1,0 +1,209 @@
+﻿@model IEnumerable<KutubxonaAt.Models.Jarima>
+@{
+    ViewData["Title"] = "Jarimalar";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="content-wrapper">
+    <div class="page-header">
+        <h3 class="page-title">Jarimalar</h3>
+    </div>
+
+    <div class="row">
+        <div class="col-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Status filter tabs -->
+                    <ul class="nav nav-tabs mb-4">
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewBag.CurrentStatus == "pending" ? "active" : "")" 
+                               asp-action="Index" asp-route-status="pending">Kutilmoqda</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewBag.CurrentStatus == "paid" ? "active" : "")" 
+                               asp-action="Index" asp-route-status="paid">To‘langan</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewBag.CurrentStatus == "cancelled" ? "active" : "")" 
+                               asp-action="Index" asp-route-status="cancelled">Bekor qilingan</a>
+                        </li>
+                    </ul>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Foydalanuvchi</th>
+                                    <th>Kitob</th>
+                                    <th>Jarima turi</th>
+                                    <th>Sabab</th>
+                                    <th>Miqdor</th>
+                                    <th>Berilgan sana</th>
+                                    <th>To‘langan sana</th>
+                                    <th>Holati</th>
+                                    <th>Amallar</th>
+                                 </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@item.Foydalanuvchi?.Familiya @item.Foydalanuvchi?.Ism</td>
+                                        <td>
+                                            @if (item.Beruv != null && item.Beruv.KitobNusxa != null)
+                                            {
+                                                @item.Beruv.KitobNusxa.Kitob?.Nomi
+                                                <br />
+                                                <small class="text-muted">@item.Beruv.KitobNusxa.InventarRaqami</small>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">-</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (item.JarimaTuri == "Kechiktirilgan")
+                                            {
+                                                <span class="badge bg-warning">Kechiktirilgan</span>
+                                            }
+                                            else if (item.JarimaTuri == "Shikastlangan")
+                                            {
+                                                <span class="badge bg-danger">Shikastlangan</span>
+                                            }
+                                            else if (item.JarimaTuri == "Yo'qolgan")
+                                            {
+                                                <span class="badge bg-dark">Yo'qolgan</span>
+                                            }
+                                            else
+                                            {
+                                                @item.JarimaTuri
+                                            }
+                                        </td>
+                                        <td>@item.Sabab</td>
+                                        <td>@item.Miqdor.ToString("N0") @item.Valyuta</td>
+                                        <td>@item.BerilganSana.ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td>@(item.TolanganSana?.ToString("dd.MM.yyyy HH:mm") ?? "-")</td>
+                                        <td>
+                                            @if (item.Holati == "Kutilmoqda")
+                                            {
+                                                <span class="badge bg-danger">Kutilmoqda</span>
+                                            }
+                                            else if (item.Holati == "To'langan")
+                                            {
+                                                <span class="badge bg-success">To‘langan</span>
+                                            }
+                                            else if (item.Holati == "Bekor qilingan")
+                                            {
+                                                <span class="badge bg-secondary">Bekor qilingan</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (item.Holati == "Kutilmoqda")
+                                            {
+                                                <!-- Pay button triggers a modal or simple form -->
+                                                <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#payModal" data-id="@item.Id" data-amount="@item.Miqdor">To‘lash</button>
+                                                <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#cancelModal" data-id="@item.Id">Bekor qilish</button>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">-</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    @if (!Model.Any())
+                    {
+                        <div class="alert alert-info text-center mt-3">
+                            Hech qanday jarima topilmadi.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pay Modal -->
+<div class="modal fade" id="payModal" tabindex="-1" aria-labelledby="payModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="payForm" method="post" asp-action="Pay">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="payModalLabel">Jarimani to‘lash</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="payFineId" />
+                    <div class="form-group">
+                        <label for="paymentMethod">To‘lov usuli</label>
+                        <select name="paymentMethod" id="paymentMethod" class="form-control" required>
+                            <option value="">-- Tanlang --</option>
+                            <option value="Naqd">Naqd</option>
+                            <option value="Karta">Karta</option>
+                            <option value="Click">Click</option>
+                            <option value="Payme">Payme</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="notes">Izoh (ixtiyoriy)</label>
+                        <textarea name="notes" id="notes" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-success">To‘lash</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="cancelForm" method="post" asp-action="Cancel">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelModalLabel">Jarimani bekor qilish</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="cancelFineId" />
+                    <div class="form-group">
+                        <label for="cancelReason">Bekor qilish sababi (ixtiyoriy)</label>
+                        <textarea name="reason" id="cancelReason" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-warning">Bekor qilish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Pay modal: set fine id
+        $('#payModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var fineId = button.data('id');
+            var modal = $(this);
+            modal.find('#payFineId').val(fineId);
+        });
+        // Cancel modal: set fine id
+        $('#cancelModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var fineId = button.data('id');
+            var modal = $(this);
+            modal.find('#cancelFineId').val(fineId);
+        });
+    </script>
+}

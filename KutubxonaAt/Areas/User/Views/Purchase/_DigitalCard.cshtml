@@ -1,0 +1,121 @@
+@using static KutubxonaAt.Models.Kitob
+@model KutubxonaAt.Models.OrderItem
+@{
+    var kitob     = Model.Kitob!;
+    bool isEKitob = kitob.MediaTuri == MediaType.ElektronKitob;
+    bool isAudio  = kitob.MediaTuri == MediaType.AudioKitob;
+    bool isVideo  = kitob.MediaTuri == MediaType.Video;
+
+    string accentColor = isEKitob ? "#2c6fad" : isAudio ? "#f39c12" : "#e74c3c";
+    string iconClass   = isEKitob ? "fa-file-pdf-o" : isAudio ? "fa-headphones" : "fa-play-circle";
+    string format      = kitob.FaylFormati ?? (isEKitob ? "PDF" : isAudio ? "MP3" : "MP4");
+
+    string btnLabel = isAudio ? "Tinglash" : isVideo ? "Ko'rish" : "Yuklab olish";
+    string btnIcon  = isAudio ? "fa-headphones" : isVideo ? "fa-play" : "fa-download";
+
+    var mualliflar = string.Join(", ", kitob.KitobMualliflari?.Select(km => km.Muallif.Familiya + " " + km.Muallif.Ism) ?? Enumerable.Empty<string>());
+    string rasmUrl = !string.IsNullOrEmpty(kitob.Rasm) ? kitob.Rasm : "/images/default-book.jpg";
+}
+
+<div class="col-md-4 col-sm-6 col-xs-12" style="margin-bottom:24px;">
+    <div class="digital-card">
+        <!-- Muqova -->
+        <div class="digital-card-cover" style="border-top:4px solid @accentColor;">
+            <a asp-area="User" asp-controller="Book" asp-action="Details" asp-route-id="@kitob.Id">
+                <img src="@rasmUrl" alt="@kitob.Nomi" />
+            </a>
+            <span class="digital-format-badge" style="background:@accentColor;">
+                <i class="fa @iconClass"></i> @format
+            </span>
+        </div>
+
+        <!-- Ma'lumot -->
+        <div class="digital-card-body">
+            <h5 class="digital-card-title">
+                <a asp-area="User" asp-controller="Book" asp-action="Details" asp-route-id="@kitob.Id"
+                   style="color:#2c3e50;">@kitob.Nomi</a>
+            </h5>
+            @if (!string.IsNullOrEmpty(mualliflar))
+            {
+                <p class="digital-card-author"><i class="fa fa-user-o"></i> @mualliflar</p>
+            }
+            <p class="digital-card-meta">
+                <span style="color:@accentColor; font-weight:700;">@Model.Narxi.ToString("N0") so'm</span>
+                &nbsp;·&nbsp;
+                <span style="color:#888;">@Model.Order?.Sana.ToString("dd.MM.yyyy")</span>
+            </p>
+        </div>
+
+        <!-- Yuklab olish -->
+        <div class="digital-card-footer">
+            <a asp-area="User" asp-controller="Purchase"
+               asp-action="Download" asp-route-kitobId="@kitob.Id"
+               class="btn btn-block"
+               style="background:@accentColor; color:#fff; border:none; border-radius:0 0 10px 10px; padding:10px;">
+                <i class="fa @btnIcon"></i> @btnLabel
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.digital-card {
+    border: 1px solid #e8e8e8;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,.07);
+    transition: transform .2s, box-shadow .2s;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.digital-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+}
+.digital-card-cover {
+    position: relative;
+    height: 180px;
+    overflow: hidden;
+    background: #f5f5f5;
+}
+.digital-card-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.digital-format-badge {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 10px;
+}
+.digital-card-body {
+    padding: 14px 14px 8px;
+    flex: 1;
+}
+.digital-card-title {
+    margin: 0 0 6px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.4;
+    max-height: 40px;
+    overflow: hidden;
+}
+.digital-card-author {
+    font-size: 12px;
+    color: #888;
+    margin: 0 0 6px;
+}
+.digital-card-meta {
+    font-size: 12px;
+    margin: 0;
+}
+.digital-card-footer {
+    margin-top: auto;
+}
+</style>

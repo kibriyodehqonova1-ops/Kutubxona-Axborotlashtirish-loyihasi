@@ -1,0 +1,90 @@
+﻿@model List<KutubxonaAt.Models.CartItem>
+@{
+    ViewData["Title"] = "Savat";
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+    decimal total = ViewBag.Total;
+}
+
+<section class="page-banner services-banner">
+    <div class="container">
+        <div class="banner-header">
+            <h2>Savat</h2>
+            <span class="underline center"></span>
+            <p class="lead">Siz tanlagan kitoblar</p>
+        </div>
+        <div class="breadcrumb">
+            <ul>
+                <li><a asp-area="User" asp-controller="Home" asp-action="Index">Bosh sahifa</a></li>
+                <li>Savat</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<div id="content" class="site-content">
+    <div class="container">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered shop_table cart">
+                    <thead>
+                        <tr>
+                            <th class="product-name">Kitob</th>
+                            <th class="product-price">Narxi</th>
+                            <th class="product-remove"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr class="cart_item">
+                                <td data-title="Product" class="product-name">
+                                    <span class="product-thumbnail">
+                                        <img src="@(string.IsNullOrEmpty(item.Rasm) ? "/images/default-book.jpg" : item.Rasm)" alt="@item.Nomi" style="width:60px;">
+                                    </span>
+                                    <span class="product-detail">
+                                        <a asp-area="User" asp-controller="Book" asp-action="Details" asp-route-id="@item.KitobId"><strong>@item.Nomi</strong></a>
+                                        <span><strong>Muallif:</strong> @item.Mualliflar</span>
+                                        <span><strong>ISBN:</strong> @item.ISBN</span>
+                                    </span>
+                                </td>
+                                <td class="product-price">
+                                    @item.Narxi.ToString("N0") so‘m
+                                </td>
+                                <td class="product-remove">
+                                    <form asp-action="RemoveFromCart" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="kitobId" value="@item.KitobId" />
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('O‘chirilsinmi?')">O‘chirish</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2" class="text-right"><strong>Jami:</strong></td>
+                            <td><strong>@total.ToString("N0") so‘m</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="text-right">
+                <a asp-action="Checkout" class="btn btn-primary">Rasmiylashtirish</a>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">Savat hozircha bo‘sh. <a asp-area="User" asp-controller="Book" asp-action="Index">Katalog</a> dan kitob qo‘shing.</div>
+        }
+    </div>
+</div>

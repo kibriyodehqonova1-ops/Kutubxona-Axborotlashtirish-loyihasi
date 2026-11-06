@@ -1,0 +1,599 @@
+/* =========================================================
+   KUTUBXONA AT — Global Custom Styles
+   Barcha view'lar uchun yagona uslub tizimi
+   ========================================================= */
+
+/* ── RANG SXEMASI ───────────────────────────────────────── */
+:root {
+    --primary:   #2c6fad;
+    --primary-dark: #1a4f80;
+    --secondary: #e8a020;
+    --success:   #27ae60;
+    --danger:    #c0392b;
+    --warning:   #e67e22;
+    --info:      #2980b9;
+    --dark:      #2c3e50;
+    --light-bg:  #f4f6f9;
+    --border:    #dee2e6;
+    --text-muted:#6c757d;
+    --card-shadow: 0 2px 12px rgba(0,0,0,.08);
+}
+
+/* ── UMUMIY ─────────────────────────────────────────────── */
+html, body { height: 100%; }
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    color: #333;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content { flex: 1; }
+
+a { color: var(--primary); transition: color .2s; }
+a:hover { color: var(--primary-dark); text-decoration: none; }
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    color: var(--dark);
+    margin-top: 0;
+}
+
+/* ── SAHIFA BANNER ──────────────────────────────────────── */
+.page-banner {
+    padding: 30px 0 20px;
+    background: linear-gradient(135deg, #1a4f80 0%, #2c6fad 100%);
+    color: #fff;
+    margin-bottom: 0;
+}
+
+.page-banner .banner-header h2 {
+    color: #fff;
+    font-size: 26px;
+    margin-bottom: 5px;
+}
+
+.page-banner .banner-header p.lead {
+    color: rgba(255,255,255,.85);
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.page-banner .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+}
+
+.page-banner .breadcrumb ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.page-banner .breadcrumb ul li::after { content: " /"; color: rgba(255,255,255,.5); margin-left: 5px; }
+.page-banner .breadcrumb ul li:last-child::after { content: ""; }
+.page-banner .breadcrumb ul li a { color: rgba(255,255,255,.8); font-size: 13px; }
+.page-banner .breadcrumb ul li a:hover { color: #fff; }
+.page-banner .breadcrumb ul li:last-child { color: rgba(255,255,255,.6); font-size: 13px; }
+
+/* ── TUGMALAR ───────────────────────────────────────────── */
+.btn {
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 16px;
+    transition: all .2s;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary   { background: var(--primary);   color: #fff; }
+.btn-primary:hover { background: var(--primary-dark); color: #fff; }
+
+.btn-success   { background: var(--success);   color: #fff; }
+.btn-success:hover { background: #1e9451; color: #fff; }
+
+.btn-warning   { background: var(--warning);   color: #fff; }
+.btn-warning:hover { background: #ca6f1e; color: #fff; }
+
+.btn-danger    { background: var(--danger);    color: #fff; }
+.btn-danger:hover { background: #a93226; color: #fff; }
+
+.btn-info      { background: var(--info);      color: #fff; }
+.btn-info:hover { background: #2471a3; color: #fff; }
+
+.btn-default   { background: #e9ecef; color: #333; border: 1px solid #ced4da; }
+.btn-default:hover { background: #dee2e6; color: #222; }
+
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+.btn-lg { padding: 10px 24px; font-size: 15px; }
+
+/* ── KARTOCHKALAR ───────────────────────────────────────── */
+.lib-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border);
+    transition: box-shadow .2s, transform .2s;
+    overflow: hidden;
+}
+
+.lib-card:hover {
+    box-shadow: 0 6px 24px rgba(0,0,0,.13);
+    transform: translateY(-2px);
+}
+
+.lib-card-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.lib-card-body {
+    padding: 14px 16px;
+}
+
+.lib-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 4px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.lib-card-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+}
+
+.lib-card-footer {
+    padding: 10px 16px;
+    background: var(--light-bg);
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+/* ── JADVALLAR ──────────────────────────────────────────── */
+.lib-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.lib-table th {
+    background: var(--dark);
+    color: #fff;
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: .5px;
+    white-space: nowrap;
+}
+
+.lib-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+
+.lib-table tr:last-child td { border-bottom: none; }
+.lib-table tr:hover td { background: #f8f9fa; }
+
+.lib-table-wrap {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+}
+
+/* ── FORMALAR ───────────────────────────────────────────── */
+.form-control {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 13px;
+    transition: border-color .2s, box-shadow .2s;
+    color: #333;
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(44,111,173,.15);
+    outline: none;
+}
+
+.form-group { margin-bottom: 16px; }
+
+.form-group label {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--dark);
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* ── XABARLAR (ALERTS) ──────────────────────────────────── */
+.alert {
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-bottom: 14px;
+    border: 1px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.alert::before { font-family: FontAwesome; font-size: 15px; }
+
+.alert-success { background: #d4edda; color: #155724; border-color: #c3e6cb; }
+.alert-success::before { content: "\f058"; }
+
+.alert-danger  { background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+.alert-danger::before  { content: "\f057"; }
+
+.alert-warning { background: #fff3cd; color: #856404; border-color: #ffeeba; }
+.alert-warning::before { content: "\f071"; }
+
+.alert-info    { background: #d1ecf1; color: #0c5460; border-color: #bee5eb; }
+.alert-info::before    { content: "\f05a"; }
+
+/* ── LABELLAR ───────────────────────────────────────────── */
+.label {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .3px;
+}
+
+.label-success { background: #d4edda; color: #155724; }
+.label-danger  { background: #f8d7da; color: #721c24; }
+.label-warning { background: #fff3cd; color: #856404; }
+.label-info    { background: #d1ecf1; color: #0c5460; }
+.label-primary { background: #cce5ff; color: #004085; }
+
+/* ── NAVBAR RESPONSIVE ──────────────────────────────────── */
+.navbar-wrapper {
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.lib-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    padding: 0 20px;
+}
+
+.lib-navbar-brand {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary) !important;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.lib-navbar-brand i { margin-right: 6px; }
+
+.lib-nav-links {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 2px;
+}
+
+.lib-nav-links > li > a {
+    display: block;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #444;
+    border-radius: 4px;
+    white-space: nowrap;
+    transition: background .15s, color .15s;
+}
+
+.lib-nav-links > li > a:hover,
+.lib-nav-links > li.active > a {
+    background: var(--light-bg);
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.lib-nav-links > li.active > a {
+    color: var(--primary);
+    border-bottom: 2px solid var(--primary);
+}
+
+/* Dropdown */
+.lib-dropdown { position: relative; }
+
+.lib-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    min-width: 200px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    z-index: 2000;
+    padding: 6px 0;
+}
+
+.lib-dropdown:hover .lib-dropdown-menu,
+.lib-dropdown.open .lib-dropdown-menu {
+    display: block;
+}
+
+.lib-dropdown-menu li a {
+    display: block;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: #444;
+    transition: background .15s;
+}
+
+.lib-dropdown-menu li a:hover {
+    background: var(--light-bg);
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.lib-dropdown-menu li a i {
+    width: 18px;
+    margin-right: 6px;
+    color: var(--text-muted);
+}
+
+/* Navbar right side */
+.lib-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.lib-user-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    background: var(--light-bg);
+    color: var(--dark);
+    font-size: 13px;
+    font-weight: 600;
+    transition: background .15s;
+    cursor: pointer;
+    border: 1px solid var(--border);
+}
+
+.lib-user-btn:hover { background: var(--border); text-decoration: none; color: var(--dark); }
+
+.lib-cart-btn {
+    position: relative;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: var(--primary);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background .15s;
+}
+
+.lib-cart-btn:hover { background: var(--primary-dark); color: #fff; text-decoration: none; }
+
+.lib-cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--danger);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #fff;
+}
+
+/* Hamburger */
+.lib-hamburger {
+    display: none;
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.lib-hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--dark);
+    border-radius: 2px;
+    transition: all .3s;
+}
+
+.lib-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.lib-hamburger.open span:nth-child(2) { opacity: 0; }
+.lib-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+/* Mobile overlay menu */
+.lib-mobile-menu {
+    display: none;
+    position: fixed;
+    top: 56px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,.4);
+    z-index: 999;
+}
+
+.lib-mobile-menu.open { display: block; }
+
+.lib-mobile-menu-panel {
+    background: #fff;
+    width: 280px;
+    height: 100%;
+    overflow-y: auto;
+    padding: 16px 0;
+    box-shadow: 4px 0 20px rgba(0,0,0,.15);
+}
+
+.lib-mobile-menu-panel ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.lib-mobile-menu-panel ul li a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #333;
+    border-bottom: 1px solid var(--border);
+    transition: background .15s;
+}
+
+.lib-mobile-menu-panel ul li a:hover { background: var(--light-bg); text-decoration: none; }
+.lib-mobile-menu-panel ul li a i { width: 18px; color: var(--primary); }
+.lib-mobile-menu-panel ul li a.active-link { color: var(--primary); background: #e8f0fb; }
+
+.lib-mobile-menu-panel .mobile-divider {
+    padding: 8px 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .8px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    background: var(--light-bg);
+}
+
+@media (max-width: 991px) {
+    .lib-nav-links,
+    .lib-nav-right .lib-user-btn { display: none; }
+    .lib-hamburger { display: flex; }
+}
+
+@media (min-width: 992px) {
+    .lib-hamburger, .lib-mobile-menu { display: none !important; }
+}
+
+/* ── FOOTER ─────────────────────────────────────────────── */
+.site-footer { background: #1a1a2e; color: #ccc; }
+.footer-widget-title { color: #fff; font-size: 15px; margin-bottom: 12px; }
+.underline.left { display: block; width: 40px; height: 2px; background: var(--secondary); margin-bottom: 14px; }
+
+/* ── PANEL → LIB-CARD mapping ───────────────────────────── */
+.panel { border-radius: 8px; box-shadow: var(--card-shadow); }
+.panel-default { border-color: var(--border); }
+.panel-heading { background: var(--light-bg); padding: 12px 16px; border-bottom: 1px solid var(--border); border-radius: 8px 8px 0 0; }
+.panel-body { padding: 16px; }
+.panel-footer { padding: 10px 16px; background: var(--light-bg); border-top: 1px solid var(--border); border-radius: 0 0 8px 8px; }
+
+/* ── KITOB KARTA (Katalog) ──────────────────────────────── */
+.book-card-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.book-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+.book-badge-available { background: #d4edda; color: #155724; }
+.book-badge-unavailable { background: #f8d7da; color: #721c24; }
+.book-badge-sale { background: #fff3cd; color: #856404; }
+
+/* ── LOGIN HINT BANNER ──────────────────────────────────── */
+.login-hint {
+    background: linear-gradient(135deg, #e8f0fb, #f0f4ff);
+    border: 1px solid #bee3f8;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+}
+
+.login-hint i { color: var(--info); font-size: 18px; }
+.login-hint a { font-weight: 700; color: var(--primary); }
+
+/* ── FOYDALI YORDAMCHILAR ───────────────────────────────── */
+.text-primary { color: var(--primary) !important; }
+.text-success { color: var(--success) !important; }
+.text-danger  { color: var(--danger)  !important; }
+.text-warning { color: var(--warning) !important; }
+.text-muted   { color: var(--text-muted) !important; }
+
+.bg-light { background: var(--light-bg); }
+.section-pad { padding: 40px 0; }
+
+.divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+
+.shadow-sm { box-shadow: var(--card-shadow) !important; }
+
+/* Badge */
+.badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--primary);
+    color: #fff;
+}
+
+/* ── TO'LOV OYNA ────────────────────────────────────────── */
+.payment-icon {
+    width: 80px;
+    height: 40px;
+    object-fit: contain;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px;
+    cursor: pointer;
+    transition: box-shadow .2s;
+}
+
+.payment-icon:hover, .payment-icon.selected { box-shadow: 0 0 0 3px var(--primary); }
+
+/* ── RESPONSIVE: kichik ekranlar ────────────────────────── */
+@media (max-width: 768px) {
+    .page-banner { padding: 20px 0 14px; }
+    .page-banner .banner-header h2 { font-size: 20px; }
+    .lib-table th, .lib-table td { font-size: 12px; padding: 7px 8px; }
+    .btn { font-size: 12px; padding: 6px 12px; }
+    .section-pad { padding: 24px 0; }
+}
+
+@media (max-width: 480px) {
+    .lib-table { display: block; overflow-x: auto; white-space: nowrap; }
+}

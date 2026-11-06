@@ -1,0 +1,101 @@
+﻿@model IEnumerable<KutubxonaAt.Models.Bron>
+@{
+    ViewData["Title"] = "Bronlar";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="content-wrapper">
+    <div class="page-header">
+        <h3 class="page-title">Bronlar</h3>
+    </div>
+
+    <div class="row">
+        <div class="col-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Status filter tabs -->
+                    <ul class="nav nav-tabs mb-4">
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewBag.CurrentStatus == "all" ? "active" : "")"
+                               asp-action="Index" asp-route-status="all">Barcha bronlar</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewBag.CurrentStatus == "active" ? "active" : "")"
+                               asp-action="Index" asp-route-status="active">Faol bronlar</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewBag.CurrentStatus == "cancelled" ? "active" : "")"
+                               asp-action="Index" asp-route-status="cancelled">Bekor qilingan</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewBag.CurrentStatus == "completed" ? "active" : "")"
+                               asp-action="Index" asp-route-status="completed">Bajarilgan</a>
+                        </li>
+                    </ul>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Foydalanuvchi</th>
+                                    <th>Kitob</th>
+                                    <th>Bron sanasi</th>
+                                    <th>Amal muddati</th>
+                                    <th>Holati</th>
+                                    <th>Amallar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@item.Foydalanuvchi?.Familiya @item.Foydalanuvchi?.Ism</td>
+                                        <td>@item.Kitob?.Nomi</td>
+                                        <td>@item.BronSana.ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td>@item.AmalMuddati.ToString("dd.MM.yyyy")</td>
+                                        <td>
+                                            @if (item.Holati == "Faol")
+                                            {
+                                                <span class="badge bg-primary">Faol</span>
+                                            }
+                                            else if (item.Holati == "Bekor qilingan")
+                                            {
+                                                <span class="badge bg-danger">Bekor qilingan</span>
+                                            }
+                                            else if (item.Holati == "Bajarilgan")
+                                            {
+                                                <span class="badge bg-success">Bajarilgan</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (item.Holati == "Faol")
+                                            {
+                                                <form asp-action="Cancel" method="post" style="display:inline;">
+                                                    <input type="hidden" name="id" value="@item.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-warning" onclick="return confirm('Haqiqatan ham bu bronni bekor qilmoqchimisiz?')">Bekor qilish</button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">-</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    @if (!Model.Any())
+                    {
+                        <div class="alert alert-info text-center mt-3">
+                            Hech qanday bron topilmadi.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,96 @@
+﻿
+@model IEnumerable<KutubxonaAt.Models.Bron>
+@{
+    ViewData["Title"] = "Mening bronlarim";
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+<!-- Page Banner -->
+<section class="page-banner services-banner">
+    <div class="container">
+        <div class="banner-header">
+            <h2>Mening bronlarim</h2>
+            <span class="underline center"></span>
+            <p class="lead">Siz bron qilgan kitoblar ro‘yxati</p>
+        </div>
+        <div class="breadcrumb">
+            <ul>
+                <li><a asp-area="User" asp-controller="Home" asp-action="Index">Bosh sahifa</a></li>
+                <li>Bronlarim</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<div id="content" class="site-content">
+    <div id="primary" class="content-area">
+        <main id="main" class="site-main">
+            <div class="main-news-list">
+                <div class="container">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Bronlarim</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Kitob nomi</th>
+                                            <th>Bron qilingan sana</th>
+                                            <th>Amal qilish muddati</th>
+                                            <th>Holat</th>
+                                            <th>Amallar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var res in Model)
+                                        {
+                                            <tr>
+                                                <td>@res.Kitob?.Nomi</td>
+                                                <td>@res.BronSana.ToString("dd.MM.yyyy HH:mm")</td>
+                                                <td>@res.AmalMuddati.ToString("dd.MM.yyyy")</td>
+                                                <td>
+                                                    @if (res.Holati == "Faol")
+                                                    {
+                                                        <span class="label label-warning">Faol</span>
+                                                    }
+                                                    else if (res.Holati == "Bekor qilingan")
+                                                    {
+                                                        <span class="label label-default">Bekor qilingan</span>
+                                                    }
+                                                    else if (res.Holati == "Bajarilgan")
+                                                    {
+                                                        <span class="label label-success">Bajarilgan</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (res.Holati == "Faol")
+                                                    {
+                                                        <form asp-action="Cancel" method="post" style="display:inline;">
+                                                            <input type="hidden" name="id" value="@res.Id" />
+                                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bronni bekor qilmoqchimisiz?')">Bekor qilish</button>
+                                                        </form>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                        @if (!Model.Any())
+                                        {
+                                            <tr>
+                                                <td colspan="5" class="text-center text-muted">
+                                                    <i class="fa fa-calendar fa-2x"></i><br />
+                                                    Hozircha hech qanday bron qilmagansiz.
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>

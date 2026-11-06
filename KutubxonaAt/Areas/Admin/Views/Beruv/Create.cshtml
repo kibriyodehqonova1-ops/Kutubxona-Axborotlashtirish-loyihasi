@@ -1,0 +1,62 @@
+﻿@using KutubxonaAt.ViewModels.Beruv
+@model IssueBookViewModel
+@{
+    ViewData["Title"] = "Kitob berish";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="content-wrapper">
+    <div class="page-header">
+        <h3 class="page-title">Kitob berish</h3>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Kitob berish formasi</h4>
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group">
+                            <label asp-for="UserId"></label>
+                            <select asp-for="UserId" asp-items="Model.Users" class="form-control">
+                                <option value="">-- Foydalanuvchini tanlang --</option>
+                            </select>
+                            <span asp-validation-for="UserId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="KitobNusxaId"></label>
+                            <select asp-for="KitobNusxaId" asp-items="Model.BookCopies" class="form-control">
+                                <option value="">-- Kitob nusxasini tanlang --</option>
+                            </select>
+                            <span asp-validation-for="KitobNusxaId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="LoanDays"></label>
+                            <input asp-for="LoanDays" class="form-control" min="1" max="60" />
+                            <span asp-validation-for="LoanDays" class="text-danger"></span>
+                            <small class="text-muted">Maksimal 60 kun</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Izoh"></label>
+                            <textarea asp-for="Izoh" class="form-control" rows="2"></textarea>
+                            <span asp-validation-for="Izoh" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary me-2">Berish</button>
+                        <a asp-action="Index" class="btn btn-light">Bekor qilish</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

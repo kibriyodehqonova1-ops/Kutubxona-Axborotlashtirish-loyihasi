@@ -1,0 +1,166 @@
+@using static KutubxonaAt.Models.Kitob
+@model IEnumerable<KutubxonaAt.Models.OrderItem>
+@{
+    ViewData["Title"] = "Raqamli kutubxonam";
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+
+    var eKitoblar = (ViewBag.EKitoblar as IEnumerable<KutubxonaAt.Models.OrderItem>) ?? Enumerable.Empty<KutubxonaAt.Models.OrderItem>();
+    var audiolar  = (ViewBag.Audiolar  as IEnumerable<KutubxonaAt.Models.OrderItem>) ?? Enumerable.Empty<KutubxonaAt.Models.OrderItem>();
+    var videolar  = (ViewBag.Videolar  as IEnumerable<KutubxonaAt.Models.OrderItem>) ?? Enumerable.Empty<KutubxonaAt.Models.OrderItem>();
+    int jami = eKitoblar.Count() + audiolar.Count() + videolar.Count();
+}
+
+<section class="page-banner services-banner">
+    <div class="container">
+        <div class="banner-header">
+            <h2>Raqamli kutubxonam</h2>
+            <span class="underline center"></span>
+            <p class="lead">Sotib olingan elektron kitoblar, audio va video materiallar</p>
+        </div>
+        <div class="breadcrumb">
+            <ul>
+                <li><a asp-area="User" asp-controller="Home" asp-action="Index">Bosh sahifa</a></li>
+                <li><a asp-area="User" asp-controller="Purchase" asp-action="Index">Xaridlarim</a></li>
+                <li>Raqamli kutubxona</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<div id="content" class="site-content">
+    <div id="primary" class="content-area">
+        <main id="main" class="site-main">
+            <div class="container" style="padding: 40px 0;">
+
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success"><i class="fa fa-check-circle"></i> @TempData["Success"]</div>
+                }
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> @TempData["Error"]</div>
+                }
+
+                @if (jami == 0)
+                {
+                    <!-- Bo'sh kutubxona -->
+                    <div style="text-align:center; padding:60px 20px;">
+                        <i class="fa fa-folder-open-o fa-5x" style="color:#ddd; display:block; margin-bottom:20px;"></i>
+                        <h3 style="color:#999;">Raqamli kutubxonangiz hozircha bo'sh</h3>
+                        <p style="color:#aaa; margin-bottom:24px;">
+                            Elektron kitob, audio yoki video kurs sotib oling — ular shu yerda saqlanadi.
+                        </p>
+                        <a asp-area="User" asp-controller="Book" asp-action="Index"
+                           asp-route-catalogId="2"
+                           class="btn btn-primary" style="margin-right:8px;">
+                            <i class="fa fa-laptop"></i> Elektron kitoblar
+                        </a>
+                        <a asp-area="User" asp-controller="Book" asp-action="Index"
+                           asp-route-catalogId="3"
+                           class="btn btn-default" style="margin-right:8px;">
+                            <i class="fa fa-headphones"></i> Audio kitoblar
+                        </a>
+                        <a asp-area="User" asp-controller="Book" asp-action="Index"
+                           asp-route-catalogId="5"
+                           class="btn btn-default">
+                            <i class="fa fa-video-camera"></i> Video kurslar
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <!-- Statistika -->
+                    <div class="row" style="margin-bottom:30px;">
+                        <div class="col-md-4 col-sm-4 col-xs-12" style="margin-bottom:12px;">
+                            <div style="background:#eaf4fb; border-radius:10px; padding:16px; text-align:center; border-left:4px solid #2c6fad;">
+                                <i class="fa fa-laptop fa-2x" style="color:#2c6fad;"></i>
+                                <h4 style="margin:8px 0 2px; color:#2c6fad;">@eKitoblar.Count()</h4>
+                                <p style="margin:0; color:#555; font-size:13px;">Elektron kitob</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-4 col-xs-12" style="margin-bottom:12px;">
+                            <div style="background:#fef9ec; border-radius:10px; padding:16px; text-align:center; border-left:4px solid #f39c12;">
+                                <i class="fa fa-headphones fa-2x" style="color:#f39c12;"></i>
+                                <h4 style="margin:8px 0 2px; color:#f39c12;">@audiolar.Count()</h4>
+                                <p style="margin:0; color:#555; font-size:13px;">Audio kitob</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-4 col-xs-12" style="margin-bottom:12px;">
+                            <div style="background:#fdecec; border-radius:10px; padding:16px; text-align:center; border-left:4px solid #e74c3c;">
+                                <i class="fa fa-video-camera fa-2x" style="color:#e74c3c;"></i>
+                                <h4 style="margin:8px 0 2px; color:#e74c3c;">@videolar.Count()</h4>
+                                <p style="margin:0; color:#555; font-size:13px;">Video kurs</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== ELEKTRON KITOBLAR ===== -->
+                    @if (eKitoblar.Any())
+                    {
+                        <div style="margin-bottom:40px;">
+                            <h3 style="color:#2c6fad; border-bottom:2px solid #eee; padding-bottom:10px; margin-bottom:20px;">
+                                <i class="fa fa-laptop"></i> Elektron kitoblar
+                            </h3>
+                            <div class="row">
+                                @foreach (var item in eKitoblar)
+                                {
+                                    @await Html.PartialAsync("_DigitalCard", item)
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <!-- ===== AUDIO KITOBLAR ===== -->
+                    @if (audiolar.Any())
+                    {
+                        <div style="margin-bottom:40px;">
+                            <h3 style="color:#f39c12; border-bottom:2px solid #eee; padding-bottom:10px; margin-bottom:20px;">
+                                <i class="fa fa-headphones"></i> Audio kitoblar
+                            </h3>
+                            <div class="row">
+                                @foreach (var item in audiolar)
+                                {
+                                    @await Html.PartialAsync("_DigitalCard", item)
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <!-- ===== VIDEO KURSLAR ===== -->
+                    @if (videolar.Any())
+                    {
+                        <div style="margin-bottom:40px;">
+                            <h3 style="color:#e74c3c; border-bottom:2px solid #eee; padding-bottom:10px; margin-bottom:20px;">
+                                <i class="fa fa-video-camera"></i> Video kurslar
+                            </h3>
+                            <div class="row">
+                                @foreach (var item in videolar)
+                                {
+                                    @await Html.PartialAsync("_DigitalCard", item)
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Yangi xarid -->
+                    <div style="text-align:center; padding:20px 0; border-top:1px solid #eee; margin-top:10px;">
+                        <p style="color:#888; margin-bottom:12px;">Yangi material qo'shmoqchimisiz?</p>
+                        <a asp-area="User" asp-controller="Book" asp-action="Index"
+                           asp-route-catalogId="2" class="btn btn-default" style="margin-right:6px;">
+                            <i class="fa fa-laptop"></i> E-kitoblar
+                        </a>
+                        <a asp-area="User" asp-controller="Book" asp-action="Index"
+                           asp-route-catalogId="3" class="btn btn-default" style="margin-right:6px;">
+                            <i class="fa fa-headphones"></i> Audio
+                        </a>
+                        <a asp-area="User" asp-controller="Book" asp-action="Index"
+                           asp-route-catalogId="5" class="btn btn-default">
+                            <i class="fa fa-video-camera"></i> Video
+                        </a>
+                    </div>
+                }
+
+            </div>
+        </main>
+    </div>
+</div>

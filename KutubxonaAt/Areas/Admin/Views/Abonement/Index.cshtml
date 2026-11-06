@@ -1,0 +1,106 @@
+@model IEnumerable<KutubxonaAt.Models.Abonement>
+@{
+    ViewData["Title"] = "Abonementlar";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-info">
+            <div class="panel-body text-center">
+                <h2>@ViewBag.JamiSoni</h2><p>Jami abonementlar</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-success">
+            <div class="panel-body text-center">
+                <h2>@ViewBag.FaolSoni</h2><p>Faol abonementlar</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-body text-center">
+                <h2>@ViewBag.TugaganSoni</h2><p>Tugagan/bekor</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <i class="fa fa-list"></i> Abonementlar
+            <div class="pull-right">
+                <a asp-action="Turlar" class="btn btn-sm btn-info">
+                    <i class="fa fa-cog"></i> Turlarni boshqarish
+                </a>
+            </div>
+        </h3>
+    </div>
+    <div class="panel-body">
+        <form method="get" class="form-inline" style="margin-bottom:15px;">
+            <select name="holat" class="form-control" style="width:150px;">
+                <option value="">Barchasi</option>
+                <option value="Faol">Faol</option>
+                <option value="Tugagan">Tugagan</option>
+                <option value="Bekor qilingan">Bekor qilingan</option>
+            </select>
+            <input name="qidiruv" class="form-control" placeholder="Foydalanuvchi..." style="width:200px;" />
+            <button type="submit" class="btn btn-default">Qidirish</button>
+        </form>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Foydalanuvchi</th>
+                        <th>Tur</th>
+                        <th>Boshlanish</th>
+                        <th>Tugash</th>
+                        <th>To'lov</th>
+                        <th>Holat</th>
+                        <th>Amallar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ab in Model)
+                    {
+                        <tr>
+                            <td>
+                                @ab.Foydalanuvchi?.Ism @ab.Foydalanuvchi?.Familiya
+                                <br /><small class="text-muted">@ab.Foydalanuvchi?.Email</small>
+                            </td>
+                            <td>@ab.AbonementTuri?.Nomi</td>
+                            <td>@ab.BoshlanishSana.ToString("dd.MM.yyyy")</td>
+                            <td>
+                                @ab.TugashSana.ToString("dd.MM.yyyy")
+                                @if (ab.Holati == "Faol" && ab.TugashSana > DateTime.Now)
+                                {
+                                    var kun = (int)(ab.TugashSana - DateTime.Now).TotalDays;
+                                    <br /><span class="label label-@(kun <= 3 ? "danger" : "success")">@kun kun qoldi</span>
+                                }
+                            </td>
+                            <td>@ab.TolanganNarx.ToString("N0") so'm</td>
+                            <td>
+                                <span class="label label-@(ab.Holati == "Faol" && ab.TugashSana > DateTime.Now ? "success" : "default")">
+                                    @ab.Holati
+                                </span>
+                            </td>
+                            <td>
+                                @if (ab.Holati == "Faol")
+                                {
+                                    <form asp-action="BekorQilish" method="post" style="display:inline;">
+                                        <input type="hidden" name="id" value="@ab.Id" />
+                                        <button type="submit" class="btn btn-xs btn-danger"
+                                            onclick="return confirm('Bekor qilinsinmi?')">Bekor</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
